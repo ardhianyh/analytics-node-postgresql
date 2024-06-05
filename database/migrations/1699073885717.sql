@@ -1,0 +1,7 @@
+DROP SCHEMA IF EXISTS appsdynamics CASCADE;
+DROP SCHEMA IF EXISTS solarwinds CASCADE;
+
+CREATE SCHEMA appsdynamics;
+CREATE SCHEMA solarwinds;
+
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
