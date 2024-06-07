@@ -27,8 +27,9 @@ CREATE TABLE appsdynamics.appsdynamics (
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
-CREATE INDEX idx_appdynamics_severity ON appsdynamics.appsdynamics(severity);
+CREATE INDEX idx_appdynamics_app ON appsdynamics.appsdynamics(app);
 CREATE INDEX idx_appdynamics_alert ON appsdynamics.appsdynamics(alert);
+CREATE INDEX idx_appdynamics_severity ON appsdynamics.appsdynamics(severity);
 CREATE INDEX idx_appdynamics_created_at ON appsdynamics.appsdynamics(created_at);
 
 CREATE TABLE solarwinds.solarwinds (
@@ -50,8 +51,9 @@ CREATE TABLE solarwinds.solarwinds (
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
-CREATE INDEX idx_solarwinds_severity ON solarwinds.solarwinds(severity);
+CREATE INDEX idx_solarwinds_layanan ON solarwinds.solarwinds(layanan);
 CREATE INDEX idx_solarwinds_alert ON solarwinds.solarwinds(alert);
+CREATE INDEX idx_solarwinds_severity ON solarwinds.solarwinds(severity);
 CREATE INDEX idx_solarwinds_created_at ON solarwinds.solarwinds(created_at);
 
 

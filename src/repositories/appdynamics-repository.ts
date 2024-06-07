@@ -66,9 +66,9 @@ export class AppDynamicsRepository {
       return query.rows.map(data => data as IAppDynamicsAlert);
    }
 
-   async getSolarwindsSeverity(filter: IFilter): Promise<{ severity: string, total: number }[] | Error | undefined> {
-      const query = await this.database.query<{ severity: string, total: number }>(`
-         SELECT * FROM appsdynamics.get_severity(
+   async getAppDynamicsChart(filter: IFilter): Promise<{ app: string, total: number }[] | Error | undefined> {
+      const query = await this.database.query<{ app: string, total: number }>(`
+         SELECT * FROM appsdynamics.get_chart(
             alert_in := $1,
             limit_in := $2,
             start_date_in := $3,

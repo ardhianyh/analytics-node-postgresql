@@ -58,9 +58,9 @@ export class SolarwindsRepository {
       return query.rows[0];
    }
 
-   async getSolarwindsSeverity(filter: IFilter): Promise<{ severity: string, total: number }[] | Error | undefined> {
-      const query = await this.database.query<{ severity: string, total: number }>(`
-         SELECT * FROM solarwinds.get_severity(
+   async getSolarwindsChart(filter: IFilter): Promise<{ layanan: string, total: number }[] | Error | undefined> {
+      const query = await this.database.query<{ layanan: string, total: number }>(`
+         SELECT * FROM solarwinds.get_chart(
             alert_in := $1,
             limit_in := $2,
             start_date_in := $3,

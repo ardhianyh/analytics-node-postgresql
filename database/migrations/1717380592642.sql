@@ -118,7 +118,7 @@ BEGIN
 END;
 $$;
 
-CREATE OR REPLACE FUNCTION appsdynamics.get_severity(
+CREATE OR REPLACE FUNCTION appsdynamics.get_chart(
    alert_in VARCHAR(255) DEFAULT NULL,
    limit_in INTEGER DEFAULT NULL,
    start_date_in DATE DEFAULT NULL,
@@ -127,7 +127,7 @@ CREATE OR REPLACE FUNCTION appsdynamics.get_severity(
    year_in TEXT DEFAULT NULL
 )
 RETURNS TABLE (
-   severity VARCHAR,
+   app VARCHAR,
    total BIGINT
 )
 LANGUAGE plpgsql
@@ -136,17 +136,18 @@ DECLARE
 BEGIN
    RETURN QUERY
    SELECT 
-      a.severity as severity, 
-      COUNT(a.severity) AS total
+      a.app as app, 
+      COUNT(a.app) AS total
    FROM appsdynamics.appsdynamics a
    WHERE (alert_in IS NULL OR a.alert = alert_in)
+   AND LOWER(a.severity) != 'info'
    AND (
 	   (start_date_in IS NULL AND end_date_in IS NULL) OR 
 	   (DATE(a.created_at) BETWEEN start_date_in AND end_date_in)
    )
    AND (month_in IS NULL OR TO_CHAR(a.created_at, 'YYYY-MM') = month_in)
    AND (year_in IS NULL OR TO_CHAR(a.created_at, 'YYYY') = year_in)
-   GROUP BY a.severity
+   GROUP BY a.app
    ORDER BY total DESC
    LIMIT limit_in;
 END;
@@ -198,7 +199,7 @@ END;
 $$;
 
 
-CREATE OR REPLACE FUNCTION solarwinds.get_severity(
+CREATE OR REPLACE FUNCTION solarwinds.get_chart(
    alert_in VARCHAR(255) DEFAULT NULL,
    limit_in INTEGER DEFAULT NULL,
    start_date_in DATE DEFAULT NULL,
@@ -207,7 +208,7 @@ CREATE OR REPLACE FUNCTION solarwinds.get_severity(
    year_in TEXT DEFAULT NULL
 )
 RETURNS TABLE (
-   severity VARCHAR,
+   layanan VARCHAR,
    total BIGINT
 )
 LANGUAGE plpgsql
@@ -216,17 +217,18 @@ DECLARE
 BEGIN
    RETURN QUERY
    SELECT 
-      ss.severity as severity, 
-      COUNT(ss.severity) AS total
+      ss.layanan as layanan, 
+      COUNT(ss.layanan) AS total
    FROM solarwinds.solarwinds ss
    WHERE (alert_in IS NULL OR ss.alert = alert_in)
+   AND LOWER(ss.severity) != 'info'
    AND (
 	   (start_date_in IS NULL AND end_date_in IS NULL) OR 
 	   (DATE(ss.created_at) BETWEEN start_date_in AND end_date_in)
    )
    AND (month_in IS NULL OR TO_CHAR(ss.created_at, 'YYYY-MM') = month_in)
    AND (year_in IS NULL OR TO_CHAR(ss.created_at, 'YYYY') = year_in)
-   GROUP BY ss.severity
+   GROUP BY ss.layanan
    ORDER BY total DESC
    LIMIT limit_in;
 END;

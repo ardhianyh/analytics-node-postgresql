@@ -1,12 +1,12 @@
 import { Router } from "express";
-import { GetAppDynamicsAlertController, GetAppDynamicsController, GetAppDynamicsSeverityController, InsertAppDynamicsController, PutAppDynamicsKlarifikasiController } from "../controllers";
+import { GetAppDynamicsAlertController, GetAppDynamicsChartController, GetAppDynamicsController, InsertAppDynamicsController, PutAppDynamicsKlarifikasiController } from "../controllers";
 const router = Router();
 
 router.get('/', GetAppDynamicsController);
 router.post('/', InsertAppDynamicsController);
 
 router.get('/alerts', GetAppDynamicsAlertController);
-router.get('/severity', GetAppDynamicsSeverityController);
+router.get('/chart', GetAppDynamicsChartController);
 router.put('/klarifikasi/:id', PutAppDynamicsKlarifikasiController);
 
 

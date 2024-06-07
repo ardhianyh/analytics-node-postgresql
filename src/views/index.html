@@ -35,7 +35,7 @@
             <div id="year"></div>
             <button type="button"
                class="px-4 text-sm font-medium text-center text-white bg-blue-700 rounded hover:bg-blue-800"
-               onclick="fetchSeverityChart()">Filter</button>
+               onclick="fetchChart()">Filter</button>
          </div>
       </div>
       <div class="flex gap-2 mb-2">
@@ -55,6 +55,7 @@
          </div>
          <div class="w-1/2">
             <div class="rounded-sm border border-stroke bg-white p-4 shadow-default h-[380px] w-full overflow-y-auto">
+               <h3 class="text-lg font-bold text-center mb-3">Solarwinds Log</h3>
                <div class="overflow-x-auto">
                   <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
                      <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
@@ -75,7 +76,7 @@
                      </thead>
                      <tbody id="solarwindsTbody">
                         <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-600">
-                           <th colspan="3" scope="row"
+                           <th colspan="4" scope="row"
                               class="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white text-center">
                               No data available
                            </th>
@@ -103,6 +104,7 @@
          </div>
          <div class="w-1/2">
             <div class="rounded-sm border border-stroke bg-white p-4 shadow-default h-[380px] w-full overflow-y-auto">
+               <h3 class="text-lg font-bold text-center mb-3">AppDynamics Log</h3>
                <div class="overflow-x-auto">
                   <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
                      <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
@@ -123,7 +125,7 @@
                      </thead>
                      <tbody id="appdynamicsTbody">
                         <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-600">
-                           <th colspan="3" scope="row"
+                           <th colspan="4" scope="row"
                               class="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white text-center">
                               No data available
                            </th>
@@ -142,11 +144,11 @@
       let solarwinds;
       const limit = 10;
 
-      let solarwindsSeverityMemory;
-      let solarwindsSeverityDisk;
+      let solarwindsChartMemory;
+      let solarwindsChartDisk;
 
-      let appdynamicsSeverity1;
-      let appdynamicsSeverity2;
+      let appdynamicsChart1;
+      let appdynamicsChart2;
 
       const appdynamicsTable = document.getElementById("appdynamicsTbody");
       const solarwindsTable = document.getElementById("solarwindsTbody");
@@ -256,7 +258,7 @@
                      ${getTimeFromTimestamp(item.created_at)}
                   </td>
                   <th scope="row" class="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                     ${item.alert}
+                     ${item.severity}
                   </th>
                   <td class="px-4 py-2">
                      ${item.app}
@@ -272,7 +274,7 @@
          } else {
             appdynamicsTable.innerHTML = `
                <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-600">
-                  <th colspan="3" scope="row"
+                  <th colspan="4" scope="row"
                      class="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white text-center">
                      No data available
                   </th>
@@ -320,14 +322,14 @@
 
       }
 
-      const renderSolarwindsSeverity = () => {
+      const renderSolarwindsChart = () => {
          let memoryHtml = "";
 
-         const totalMemory = solarwindsSeverityMemory.reduce((acc, item) => {
+         const totalMemory = solarwindsChartMemory.reduce((acc, item) => {
             return acc + Number(item.total);
          }, 0);
 
-         const updatedMemoryList = solarwindsSeverityMemory.map(item => {
+         const updatedMemoryList = solarwindsChartMemory.map(item => {
             const percent = (Number(item.total) / totalMemory) * 100;
             return {
                ...item,
@@ -341,7 +343,7 @@
                <div class="flex items-center gap-2">
                   <div class="w-2/6 flex gap-3">
                      <p class="font-medium text-black text-sm">${index + 1}</p>
-                     <p class="font-medium text-black text-sm">${item.severity}</p>
+                     <p class="font-medium text-black text-sm">${item.layanan}</p>
                   </div>
                   <div class="relative block h-[1.125rem] w-4/6 bg-[#e5e7eb]">
                      <div
@@ -353,7 +355,7 @@
             `;
          }
 
-         if (solarwindsSeverityMemory.length === 0) {
+         if (solarwindsChartMemory.length === 0) {
             solarwindsMemory.innerHTML = `<p class="text-center">No data available</p>`;
          } else {
             solarwindsMemory.innerHTML = memoryHtml;
@@ -361,11 +363,11 @@
 
          let diskHtml = "";
 
-         const totalDisk = solarwindsSeverityDisk.reduce((acc, item) => {
+         const totalDisk = solarwindsChartDisk.reduce((acc, item) => {
             return acc + Number(item.total);
          }, 0);
 
-         const updatedDiskList = solarwindsSeverityDisk.map(item => {
+         const updatedDiskList = solarwindsChartDisk.map(item => {
             const percent = (Number(item.total) / totalDisk) * 100;
             return {
                ...item,
@@ -379,7 +381,7 @@
                <div class="flex items-center gap-2">
                   <div class="w-2/6 flex gap-3">
                      <p class="font-medium text-black text-sm">${index + 1}</p>
-                     <p class="font-medium text-black text-sm">${item.severity}</p>
+                     <p class="font-medium text-black text-sm">${item.layanan}</p>
                   </div>
                   <div class="relative block h-[1.125rem] w-4/6 bg-[#e5e7eb]">
                      <div
@@ -390,7 +392,7 @@
                </div>
             `;
          }
-         if (solarwindsSeverityDisk.length === 0) {
+         if (solarwindsChartDisk.length === 0) {
             solarwindsDisk.innerHTML = `<p class="text-center">No data available</p>`;
          } else {
             solarwindsDisk.innerHTML = diskHtml;
@@ -398,14 +400,14 @@
 
       }
 
-      const renderAppdynamicsSeverity = () => {
+      const renderAppdynamicsChart = () => {
          let appdynamics1Html = "";
 
-         const totalAppdynamic1 = appdynamicsSeverity1.reduce((acc, item) => {
+         const totalAppdynamic1 = appdynamicsChart1.reduce((acc, item) => {
             return acc + Number(item.total);
          }, 0);
 
-         const updatedAppdynamics1List = appdynamicsSeverity1.map(item => {
+         const updatedAppdynamics1List = appdynamicsChart1.map(item => {
             const percent = (Number(item.total) / totalAppdynamic1) * 100;
             return {
                ...item,
@@ -419,7 +421,7 @@
                <div class="flex items-center gap-2">
                   <div class="w-2/6 flex gap-3">
                      <p class="font-medium text-black text-sm">${index + 1}</p>
-                     <p class="font-medium text-black text-sm">${item.severity}</p>
+                     <p class="font-medium text-black text-sm">${item.app}</p>
                   </div>
                   <div class="relative block h-[1.125rem] w-4/6 bg-[#e5e7eb]">
                      <div
@@ -431,7 +433,7 @@
             `;
          }
 
-         if (appdynamicsSeverity1.length === 0) {
+         if (appdynamicsChart1.length === 0) {
             appdynamics1.innerHTML = `<p class="text-center">No data available</p>`;
          } else {
             appdynamics1.innerHTML = appdynamics1Html;
@@ -439,11 +441,11 @@
 
          let appdynamics2Html = "";
 
-         const totalAppdynamic2 = appdynamicsSeverity2.reduce((acc, item) => {
+         const totalAppdynamic2 = appdynamicsChart2.reduce((acc, item) => {
             return acc + Number(item.total);
          }, 0);
 
-         const updatedAppdynamic2List = appdynamicsSeverity2.map(item => {
+         const updatedAppdynamic2List = appdynamicsChart2.map(item => {
             const percent = (Number(item.total) / totalAppdynamic2) * 100;
             return {
                ...item,
@@ -457,7 +459,7 @@
                <div class="flex items-center gap-2">
                   <div class="w-2/6 flex gap-3">
                      <p class="font-medium text-black text-sm">${index + 1}</p>
-                     <p class="font-medium text-black text-sm">${item.severity}</p>
+                     <p class="font-medium text-black text-sm">${item.app}</p>
                   </div>
                   <div class="relative block h-[1.125rem] w-4/6 bg-[#e5e7eb]">
                      <div
@@ -469,7 +471,7 @@
             `;
          }
 
-         if (appdynamicsSeverity2.length === 0) {
+         if (appdynamicsChart2.length === 0) {
             appdynamics2.innerHTML = `<p class="text-center">No data available</p>`;
          } else {
             appdynamics2.innerHTML = appdynamics2Html;
@@ -488,38 +490,38 @@
          renderSolarwindsData();
       }
 
-      const fetchSolarwindsSeverity = async () => {
+      const fetchSolarwindsChart = async () => {
          const params = getFilterParams();
          const [memory, disk] = await Promise.all([
-            fetch(`/solarwinds/severity?limit=${limit}&${params}&alert=Memory CPU Alert`),
-            fetch(`/solarwinds/severity?limit=${limit}&${params}&alert=Disk Alert`)
+            fetch(`/solarwinds/chart?limit=${limit}&${params}&alert=Memory CPU Alert`),
+            fetch(`/solarwinds/chart?limit=${limit}&${params}&alert=Disk Alert`)
          ]);
-         solarwindsSeverityMemory = await memory.json();
-         solarwindsSeverityDisk = await disk.json();
+         solarwindsChartMemory = await memory.json();
+         solarwindsChartDisk = await disk.json();
 
-         renderSolarwindsSeverity();
+         renderSolarwindsChart();
       }
 
-      const fetchAppdynamicsSeverity = async () => {
+      const fetchAppdynamicsChart = async () => {
          const params = getFilterParams();
          const [alert1, alert2] = await Promise.all([
-            fetch(`/appdynamics/severity?limit=${limit}&${params}&alert=AppDynamics_Alert_1`),
-            fetch(`/appdynamics/severity?limit=${limit}&${params}&alert=AppDynamics_Alert_2`)
+            fetch(`/appdynamics/chart?limit=${limit}&${params}&alert=AppDynamics_Alert_1`),
+            fetch(`/appdynamics/chart?limit=${limit}&${params}&alert=AppDynamics_Alert_2`)
          ]);
-         appdynamicsSeverity1 = await alert1.json();
-         appdynamicsSeverity2 = await alert2.json();
+         appdynamicsChart1 = await alert1.json();
+         appdynamicsChart2 = await alert2.json();
 
-         renderAppdynamicsSeverity();
+         renderAppdynamicsChart();
       }
 
-      const fetchSeverityChart = async () => {
-         await fetchSolarwindsSeverity();
-         await fetchAppdynamicsSeverity();
+      const fetchChart = async () => {
+         await fetchSolarwindsChart();
+         await fetchAppdynamicsChart();
       }
 
       fetchAppDynamicsData();
       fetchSolarwindsData();
-      fetchSeverityChart();
+      fetchChart();
       renderFilter();
    </script>
 </body>
