@@ -6,7 +6,7 @@ CREATE OR REPLACE FUNCTION appsdynamics.get_appsdynamics(
    priority_in VARCHAR(255) DEFAULT NULL
 )
 RETURNS TABLE (
-   appsdynamics_id UUID,
+   id INTEGER,
    alert VARCHAR,
    severity VARCHAR,
    app VARCHAR,
@@ -15,6 +15,13 @@ RETURNS TABLE (
    event_name VARCHAR,
    recipient_name VARCHAR,
    alarm_message TEXT,
+   normal VARCHAR,
+   slow VARCHAR,
+   very_slow VARCHAR,
+   stall VARCHAR,
+   error VARCHAR,
+   date_time VARCHAR,
+   klarifikasi VARCHAR,
    created_at TIMESTAMPTZ
 )
 LANGUAGE plpgsql
@@ -23,22 +30,28 @@ DECLARE
 BEGIN
    RETURN QUERY
    SELECT 
-      a.id AS appsdynamics_id,
-      aa.name AS alert,
-      ap.severity AS severity,
-      ap.app AS app,
-      ap.priority AS priority,
-      ap.service_time AS service_time,
-      ap.event_name AS event_name,
-      ap.recipient_name AS recipient_name,
-      ap.alarm_message AS alarm_message,
+      a.id as id,
+      a.alert AS alert,
+      a.severity AS severity,
+      a.app AS app,
+      a.priority AS priority,
+      a.service_time AS service_time,
+      a.event_name AS event_name,
+      a.recipient_name AS recipient_name,
+      a.alarm_message AS alarm_message,
+      a.normal AS normal,
+      a.slow AS slow,
+      a.very_slow AS very_slow,
+      a.stall AS stall,
+      a.error AS error,
+      a.date_time AS date_time,
+      a.klarifikasi AS klarifikasi,
       a.created_at AS created_at
    FROM appsdynamics.appsdynamics a
-   JOIN appsdynamics.appsdynamics_alert aa ON aa.id = a.appsdynamics_alert_id
-   LEFT JOIN appsdynamics.appsdynamics_parameters ap ON ap.appsdynamics_id = a.id
-   WHERE (severity_in IS NULL OR ap.severity ILIKE '%' || severity_in || '%')
-   AND (app_in IS NULL OR ap.app ILIKE '%' || app_in || '%')
-   AND (priority_in IS NULL OR ap.priority ILIKE '%' || priority_in || '%')
+   WHERE (severity_in IS NULL OR a.severity ILIKE '%' || severity_in || '%')
+   AND (app_in IS NULL OR a.app ILIKE '%' || app_in || '%')
+   AND (priority_in IS NULL OR a.priority ILIKE '%' || priority_in || '%')
+   ORDER BY a.created_at DESC
    LIMIT (limit_in)
    OFFSET (page_in * limit_in);
 END;
@@ -46,60 +59,98 @@ $$;
 
 
 CREATE OR REPLACE FUNCTION appsdynamics.insert_appsdynamics(
-   appsdynamics_alert_id_in UUID,
+   alert_in VARCHAR(255) DEFAULT NULL,
    to_number_in VARCHAR(255) DEFAULT NULL,
    to_name_in VARCHAR(255) DEFAULT NULL,
    channel_integration_id_in VARCHAR(255) DEFAULT NULL,
    message_template_id_in VARCHAR(255) DEFAULT NULL,
    language_in VARCHAR(255) DEFAULT NULL,
-   parameters_in JSON DEFAULT NULL
+   parameters_in JSON DEFAULT NULL,
+   alarm_in JSON DEFAULT NULL
 )
-RETURNS UUID
+RETURNS VOID
 LANGUAGE plpgsql
 AS $$
 DECLARE
    inserted_appsdynamics_id UUID;
 BEGIN
    INSERT INTO appsdynamics.appsdynamics(
-      appsdynamics_alert_id,
-      to_name,
+      alert,
       to_number,
+      to_name,
       channel_integration_id,
       message_template_id,
-      language
-   ) VALUES (
-      appsdynamics_alert_id_in,
-      to_number_in,
-      to_name_in,
-      channel_integration_id_in,
-      message_template_id_in,
-      language_in
-   ) RETURNING id INTO inserted_appsdynamics_id;
-
-   INSERT INTO appsdynamics.appsdynamics_parameters(
-      appsdynamics_id,
+      language,
       severity,
       app,
       priority,
       service_time,
       event_name,
       recipient_name,
-      alarm_message
+      alarm_message,
+      normal,
+      slow,
+      very_slow,
+      stall,
+      error,
+      date_time
    ) VALUES (
-      inserted_appsdynamics_id,
+      alert_in,
+      to_number_in,
+      to_name_in,
+      channel_integration_id_in,
+      message_template_id_in,
+      language_in,
       parameters_in->>'severity',
       parameters_in->>'app',
       parameters_in->>'priority',
       parameters_in->>'service_time',
       parameters_in->>'event_name',
       parameters_in->>'recipient_name',
-      parameters_in->>'alarm_message'
+      parameters_in->>'alarm_message',
+      alarm_in->>'normal',
+      alarm_in->>'slow',
+      alarm_in->>'very_slow',
+      alarm_in->>'stall',
+      alarm_in->>'error',
+      alarm_in->>'date_time'
    );
-
-   RETURN inserted_appsdynamics_id;
 END;
 $$;
 
+CREATE OR REPLACE FUNCTION appsdynamics.get_severity(
+   alert_in VARCHAR(255) DEFAULT NULL,
+   limit_in INTEGER DEFAULT NULL,
+   start_date_in DATE DEFAULT NULL,
+   end_date_in DATE DEFAULT NULL,
+   month_in TEXT DEFAULT NULL,
+   year_in TEXT DEFAULT NULL
+)
+RETURNS TABLE (
+   severity VARCHAR,
+   total BIGINT
+)
+LANGUAGE plpgsql
+AS $$
+DECLARE
+BEGIN
+   RETURN QUERY
+   SELECT 
+      a.severity as severity, 
+      COUNT(a.severity) AS total
+   FROM appsdynamics.appsdynamics a
+   WHERE (alert_in IS NULL OR a.alert = alert_in)
+   AND (
+	   (start_date_in IS NULL AND end_date_in IS NULL) OR 
+	   (DATE(a.created_at) BETWEEN start_date_in AND end_date_in)
+   )
+   AND (month_in IS NULL OR TO_CHAR(a.created_at, 'YYYY-MM') = month_in)
+   AND (year_in IS NULL OR TO_CHAR(a.created_at, 'YYYY') = year_in)
+   GROUP BY a.severity
+   ORDER BY total DESC
+   LIMIT limit_in;
+END;
+$$;
 
 CREATE OR REPLACE FUNCTION solarwinds.get_solarwinds(
    page_in INTEGER DEFAULT NULL,
@@ -109,6 +160,7 @@ CREATE OR REPLACE FUNCTION solarwinds.get_solarwinds(
    priority_in VARCHAR(255) DEFAULT NULL
 )
 RETURNS TABLE (
+   id INTEGER,
    alert VARCHAR,
    severity VARCHAR,
    layanan VARCHAR,
@@ -116,6 +168,7 @@ RETURNS TABLE (
    service_time VARCHAR,
    ip_address VARCHAR,
    node_name VARCHAR,
+   klarifikasi VARCHAR,
    created_at TIMESTAMPTZ
 )
 LANGUAGE plpgsql
@@ -124,6 +177,7 @@ DECLARE
 BEGIN
    RETURN QUERY
    SELECT 
+      ss.id AS id,
       ss.alert AS alert,
       ss.severity AS severity,
       ss.layanan AS layanan,
@@ -131,12 +185,49 @@ BEGIN
       ss.service_time AS service_time,
       ss.ip_address AS ip_address,
       ss.node_name AS node_name,
+      ss.klarifikasi AS klarifikasi,
       ss.created_at AS created_at
    FROM solarwinds.solarwinds ss
    WHERE (severity_in IS NULL OR ss.severity ILIKE '%' || severity_in || '%')
    AND (layanan_in IS NULL OR ss.layanan ILIKE '%' || layanan_in || '%')
    AND (priority_in IS NULL OR ss.priority ILIKE '%' || priority_in || '%')
+   ORDER BY ss.created_at DESC
    LIMIT (limit_in)
    OFFSET (page_in * limit_in);
+END;
+$$;
+
+
+CREATE OR REPLACE FUNCTION solarwinds.get_severity(
+   alert_in VARCHAR(255) DEFAULT NULL,
+   limit_in INTEGER DEFAULT NULL,
+   start_date_in DATE DEFAULT NULL,
+   end_date_in DATE DEFAULT NULL,
+   month_in TEXT DEFAULT NULL,
+   year_in TEXT DEFAULT NULL
+)
+RETURNS TABLE (
+   severity VARCHAR,
+   total BIGINT
+)
+LANGUAGE plpgsql
+AS $$
+DECLARE
+BEGIN
+   RETURN QUERY
+   SELECT 
+      ss.severity as severity, 
+      COUNT(ss.severity) AS total
+   FROM solarwinds.solarwinds ss
+   WHERE (alert_in IS NULL OR ss.alert = alert_in)
+   AND (
+	   (start_date_in IS NULL AND end_date_in IS NULL) OR 
+	   (DATE(ss.created_at) BETWEEN start_date_in AND end_date_in)
+   )
+   AND (month_in IS NULL OR TO_CHAR(ss.created_at, 'YYYY-MM') = month_in)
+   AND (year_in IS NULL OR TO_CHAR(ss.created_at, 'YYYY') = year_in)
+   GROUP BY ss.severity
+   ORDER BY total DESC
+   LIMIT limit_in;
 END;
 $$;

@@ -1,12 +1,10 @@
 import { Router } from "express";
-import { GetSolarwindsAlertController, GetSolarwindsController, InsertAppDynamicsController, InsertSolarwindsAlertController, InsertSolarwindsController } from "../controllers";
+import { GetSolarwindsController, GetSolarwindsSeverityController, InsertSolarwindsController, PutSolarwindsKlarifikasiController } from "../controllers";
 const router = Router();
 
 router.get('/', GetSolarwindsController);
+router.get('/severity', GetSolarwindsSeverityController);
 router.post('/', InsertSolarwindsController);
-
-router.get('/alerts', GetSolarwindsAlertController);
-router.post('/alerts', InsertSolarwindsAlertController);
-
+router.put('/klarifikasi/:id', PutSolarwindsKlarifikasiController);
 
 export const solarwindsRouter = router;

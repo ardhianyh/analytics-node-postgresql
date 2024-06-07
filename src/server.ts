@@ -9,7 +9,7 @@ import { getRequiredEnvironmentVariables } from "./utils/get-required-environmen
       const requiredVariables = getRequiredEnvironmentVariables();
       await initializeRepositories();
       app.listen(requiredVariables.port, async () => {
-         console.info(`🚀 Server listening at: ${requiredVariables.host}:${requiredVariables.port}`)
+         console.info(`🚀 Server listening at: http://${requiredVariables.host}:${requiredVariables.port}`)
       })
    } catch (error) {
       console.error(

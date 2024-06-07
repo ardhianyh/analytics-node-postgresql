@@ -1,8 +1,3 @@
-export interface ISolarwindsAlert {
-   id?: string;
-   name: string;
-}
-
 export interface ISolarwinds {
    id?: string;
    alert: string;
@@ -18,4 +13,5 @@ export interface ISolarwinds {
    total_cpu_count?: string;
    total_memory?: string;
    os: string;
+   klarifikasi?: string;
 }

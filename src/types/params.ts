@@ -14,3 +14,12 @@ export interface IAppDynamicsParams extends IParams {
    app?: string;
    priority?: string;
 }
+
+export interface IFilter {
+   alert?: string;
+   limit?: string;
+   start_date?: string;
+   end_date?: string;
+   month?: string;
+   year?: string;
+}

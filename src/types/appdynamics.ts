@@ -1,5 +1,4 @@
 export interface IAppDynamicsAlert {
-   id: string;
    name: string;
 }
 
@@ -10,8 +9,7 @@ type Parameter = {
 };
 
 export interface IAppDynamics {
-   id?: string;
-   appsdynamics_alert_id: string;
+   alert: string;
    to_number?: string;
    to_name?: string;
    channel_integration_id?: string;
@@ -20,10 +18,11 @@ export interface IAppDynamics {
    parameters: {
       body: Parameter[];
    };
+   alarm?: IAppDynamicAlarmMessage;
+   klarifikasi: string;
 }
 
 export interface IAppDynamicsParameters {
-   id?: string;
    appsdynamics_id: string;
    severity: string;
    app: string;
@@ -32,4 +31,13 @@ export interface IAppDynamicsParameters {
    event_name: string;
    recipient_name: string;
    alarm_message: string;
+}
+
+export interface IAppDynamicAlarmMessage {
+   normal?: string;
+   slow?: string;
+   very_slow?: string;
+   stall?: string;
+   error?: string;
+   date_time?: string;
 }

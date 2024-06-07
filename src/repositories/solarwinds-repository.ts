@@ -1,4 +1,4 @@
-import { IDatabase, ISolarwinds, ISolarwindsAlert, ISolarwindsParams } from "../types";
+import { IDatabase, IFilter, ISolarwinds, ISolarwindsParams } from "../types";
 
 export class SolarwindsRepository {
    constructor(private database: IDatabase) { }
@@ -58,25 +58,38 @@ export class SolarwindsRepository {
       return query.rows[0];
    }
 
-   async getSolarwindsAlert(): Promise<ISolarwindsAlert[] | Error | undefined> {
-      const query = await this.database.query<ISolarwindsAlert>("SELECT * FROM solarwinds.solarwinds_alert", []);
+   async getSolarwindsSeverity(filter: IFilter): Promise<{ severity: string, total: number }[] | Error | undefined> {
+      const query = await this.database.query<{ severity: string, total: number }>(`
+         SELECT * FROM solarwinds.get_severity(
+            alert_in := $1,
+            limit_in := $2,
+            start_date_in := $3,
+            end_date_in := $4,
+            month_in := $5,
+            year_in := $6
+         )
+      `,
+         [
+            filter.alert ?? null,
+            filter.limit ?? 10,
+            filter.start_date ?? null,
+            filter.end_date ?? null,
+            filter.month ?? null,
+            filter.year ?? null
+         ]
+      );
+
       if (query instanceof Error) {
          return query;
       }
 
-      return query.rows.map(data => data as ISolarwindsAlert);
+      return query.rows;
    }
 
-   async insertSolarwindsAlert(data: ISolarwindsAlert): Promise<ISolarwindsAlert | Error> {
-      const query = await this.database.query<ISolarwindsAlert>(`
-         INSERT INTO solarwinds.solarwinds_alert 
-         (name) 
-         VALUES ($1) 
-         RETURNING *
-      `, [
-         data.name,
-      ]);
-
+   async updateKlarifikasi(id: string, klarifikasi: string): Promise<{ klarifikasi: string } | Error | undefined> {
+      const query = await this.database.query<{ klarifikasi: string }>(`
+            UPDATE solarwinds.solarwinds SET klarifikasi = $2 WHERE id = $1;
+      `, [id, klarifikasi]);
       if (query instanceof Error) {
          return query;
       }

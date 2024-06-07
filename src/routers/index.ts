@@ -11,6 +11,10 @@ router.get('/', (_: Request, response: Response) => {
    return response.sendFile(views + '/index.html');
 });
 
+router.get('/raw', (_: Request, response: Response) => {
+   return response.sendFile(views + '/raw.html');
+});
+
 router.use('/appdynamics', appDynamicsRouter);
 router.use('/solarwinds', solarwindsRouter);
 

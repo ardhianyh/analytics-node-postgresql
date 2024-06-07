@@ -4,237 +4,245 @@
 <head>
    <meta charset="UTF-8">
    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-   <title>Document</title>
-   <script src="https://cdn.tailwindcss.com"></script>
+   <title>Dashboard</title>
+   <script src="./tailwind.js"></script>
 </head>
 
 <body class="bg-gray-100">
-   <div class="w-full h-full flex-1 p-6">
-      <div
-         class="rounded-sm border border-stroke bg-white p-6 shadow-default dark:border-strokedark dark:bg-boxdark mb-6">
-         <div class="flex justify-between items-center mb-6">
-            <p class="text-xl font-bold">Solarwinds Log</p>
-            <div class="flex items-center gap-2">
-               <p class="text-sm font-bold mr-2">Filter</p>
-               <select onchange="filterOnChange(event, 'solarwinds', 'severity')"
-                  class="block w-full p-2 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-                  <option disabled selected>Pilih Severity</option>
-                  <option value="Warning">Warning</option>
+   <div class="w-full h-full block p-6">
+      <div class="flex justify-between items-center mb-5">
+         <h3 class="text-2xl font-bold text-black">
+            Dashboard Overview
+         </h3>
+         <div class="flex gap-2">
+            <div class="relative rounded bg-white">
+               <select onchange="changeFilterType(event)"
+                  class="relative inline-flex appearance-none rounded border border-gray-300 bg-white py-2 pl-4 pr-9 text-sm outline-none h-[42px]">
+                  <option value="custom_date" selected>Custom Date</option>
+                  <option value="month">Month</option>
+                  <option value="year">Year</option>
                </select>
-               <select onchange="filterOnChange(event, 'solarwinds', 'layanan')"
-                  class="block w-full p-2 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-                  <option disabled selected>Pilih Layanan</option>
-                  <option value="Bvl">Bvl</option>
-                  <option value="DATA LAKE / HADOOP">DATA LAKE / HADOOP</option>
-               </select>
-               <select onchange="filterOnChange(event, 'solarwinds', 'priority')"
-                  class="block w-full p-2 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-                  <option disabled selected>Pilih Priority</option>
-                  <option value="P1">P1</option>
-               </select>
-               <button type="button" onclick="fetchSolarwindsData()"
-                  class="px-3 py-2 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Submit</button>
+               <span class="absolute right-3 top-1/2 z-10 -translate-y-1/2">
+                  <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                     <path fill-rule="evenodd" clip-rule="evenodd"
+                        d="M3.96967 6.21967C4.26256 5.92678 4.73744 5.92678 5.03033 6.21967L9 10.1893L12.9697 6.21967C13.2626 5.92678 13.7374 5.92678 14.0303 6.21967C14.3232 6.51256 14.3232 6.98744 14.0303 7.28033L9.53033 11.7803C9.23744 12.0732 8.76256 12.0732 8.46967 11.7803L3.96967 7.28033C3.67678 6.98744 3.67678 6.51256 3.96967 6.21967Z"
+                        fill="#64748B"></path>
+                  </svg>
+               </span>
             </div>
+            <div id="custom_date" class="flex gap-2"></div>
+            <div id="month"></div>
+            <div id="year"></div>
+            <button type="button"
+               class="px-4 text-sm font-medium text-center text-white bg-blue-700 rounded hover:bg-blue-800"
+               onclick="fetchSeverityChart()">Filter</button>
          </div>
-         <div class="relative overflow-x-auto shadow-md rounded-sm">
-            <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
-               <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-                  <tr>
-                     <th scope="col" class="px-6 py-3">
-                        Alert
-                     </th>
-                     <th scope="col" class="px-6 py-3 text-center">
-                        Severity
-                     </th>
-                     <th scope="col" class="px-6 py-3">
-                        Layanan
-                     </th>
-                     <th scope="col" class="px-6 py-3 text-center">
-                        Priority
-                     </th>
-                     <th scope="col" class="px-6 py-3">
-                        Service Time
-                     </th>
-                     <th scope="col" class="px-6 py-3">
-                        IP Address
-                     </th>
-                     <th scope="col" class="px-6 py-3">
-                        Node Name
-                     </th>
-                  </tr>
-               </thead>
-               <tbody id="solarwindsTbody">
-                  <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-600">
-                     <th colspan="8" scope="row"
-                        class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white text-center">
-                        No data available
-                     </th>
-                  </tr>
-               </tbody>
-            </table>
-         </div>
-         <nav class="flex items-center flex-column flex-wrap md:flex-row justify-end pt-4" aria-label="Table navigation"
-            id="solarwindsPagination"></nav>
       </div>
-
-      <div class="rounded-sm border border-stroke bg-white p-6 shadow-default dark:border-strokedark dark:bg-boxdark">
-         <div class="flex justify-between items-center mb-6">
-            <p class="text-xl font-bold">AppDynamics Log</p>
-            <div class="flex items-center gap-2">
-               <p class="text-sm font-bold mr-2">Filter</p>
-               <select onchange="filterOnChange(event, 'appdynamics', 'severity')"
-                  class="block w-full p-2 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-                  <option disabled selected>Pilih Severity</option>
-                  <option value="CRITICAL">CRITICAL</option>
-                  <option value="INFO">INFO</option>
-               </select>
-               <select onchange="filterOnChange(event, 'appdynamics', 'app')"
-                  class="block w-full p-2 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-                  <option disabled selected>Pilih App</option>
-                  <option value="PMobX">PMobX</option>
-                  <option value="PEB">PEB</option>
-               </select>
-               <select onchange="filterOnChange(event, 'appdynamics', 'priority')"
-                  class="block w-full p-2 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-                  <option disabled selected>Pilih Priority</option>
-                  <option value="1">1</option>
-               </select>
-               <button type="button" onclick="fetchAppDynamicsData()"
-                  class="px-3 py-2 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Submit</button>
+      <div class="flex gap-2 mb-2">
+         <div class="w-1/4">
+            <div
+               class="rounded-sm flex flex-col gap-2 border border-stroke bg-white p-5 shadow-default w-full h-[380px]">
+               <h3 class="text-lg font-bold text-center mb-3">Layanan Solarwinds Memory CPU</h3>
+               <div id="solarwindsMemory" class="flex flex-col gap-2"></div>
             </div>
          </div>
-         <div class="relative overflow-x-auto shadow-md rounded-sm">
-            <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
-               <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-                  <tr>
-                     <th scope="col" class="px-6 py-3">
-                        Alert
-                     </th>
-                     <th scope="col" class="px-6 py-3 text-center">
-                        Severity
-                     </th>
-                     <th scope="col" class="px-6 py-3">
-                        App
-                     </th>
-                     <th scope="col" class="px-6 py-3 text-center">
-                        Priority
-                     </th>
-                     <th scope="col" class="px-6 py-3">
-                        Service Time
-                     </th>
-                     <th scope="col" class="px-6 py-3 text-center">
-                        Recipient Name
-                     </th>
-                     <th scope="col" class="px-6 py-3">
-                        Created At
-                     </th>
-                  </tr>
-               </thead>
-               <tbody id="appdynamicsTbody">
-                  <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-600">
-                     <th colspan="8" scope="row"
-                        class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white text-center">
-                        No data available
-                     </th>
-                  </tr>
-               </tbody>
-            </table>
+         <div class="w-1/4">
+            <div
+               class="rounded-sm flex flex-col gap-2 border border-stroke bg-white p-5 shadow-default w-full h-[380px] ">
+               <h3 class="text-lg font-bold text-center mb-3">Layanan Solarwinds Disk</h3>
+               <div id="solarwindsDisk" class="flex flex-col gap-2"></div>
+            </div>
          </div>
-         <nav class="flex items-center flex-column flex-wrap md:flex-row justify-end pt-4" aria-label="Table navigation"
-            id="appdynamicPagination"></nav>
+         <div class="w-1/2">
+            <div class="rounded-sm border border-stroke bg-white p-4 shadow-default h-[380px] w-full overflow-y-auto">
+               <div class="overflow-x-auto">
+                  <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+                     <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                        <tr>
+                           <th scope="col" class="px-4 py-2">
+                              Waktu
+                           </th>
+                           <th scope="col" class="px-4 py-2">
+                              Severity
+                           </th>
+                           <th scope="col" class="px-4 py-2">
+                              Layanan
+                           </th>
+                           <th scope="col" class="px-4 py-2">
+                              Node Name
+                           </th>
+                        </tr>
+                     </thead>
+                     <tbody id="solarwindsTbody">
+                        <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-600">
+                           <th colspan="3" scope="row"
+                              class="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white text-center">
+                              No data available
+                           </th>
+                        </tr>
+                     </tbody>
+                  </table>
+               </div>
+            </div>
+         </div>
+      </div>
+      <div class="flex gap-2">
+         <div class="w-1/4">
+            <div
+               class="rounded-sm flex flex-col gap-2 border border-stroke bg-white p-5 shadow-default w-full h-[380px]">
+               <h3 class="text-lg font-bold text-center mb-3">Layanan AppDynamic Alert 1</h3>
+               <div id="appdynamics1" class="flex flex-col gap-2"></div>
+            </div>
+         </div>
+         <div class="w-1/4">
+            <div
+               class="rounded-sm flex flex-col gap-2 border border-stroke bg-white p-5 shadow-default w-full h-[380px]">
+               <h3 class="text-lg font-bold text-center mb-3">Layanan AppDynamic Alert 2</h3>
+               <div id="appdynamics2" class="flex flex-col gap-2"></div>
+            </div>
+         </div>
+         <div class="w-1/2">
+            <div class="rounded-sm border border-stroke bg-white p-4 shadow-default h-[380px] w-full overflow-y-auto">
+               <div class="overflow-x-auto">
+                  <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+                     <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                        <tr>
+                           <th scope="col" class="px-4 py-2">
+                              Waktu
+                           </th>
+                           <th scope="col" class="px-4 py-2">
+                              Severity
+                           </th>
+                           <th scope="col" class="px-4 py-2">
+                              App
+                           </th>
+                           <th scope="col" class="px-4 py-2">
+                              Event Name
+                           </th>
+                        </tr>
+                     </thead>
+                     <tbody id="appdynamicsTbody">
+                        <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-600">
+                           <th colspan="3" scope="row"
+                              class="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white text-center">
+                              No data available
+                           </th>
+                        </tr>
+                     </tbody>
+                  </table>
+               </div>
+            </div>
+         </div>
       </div>
    </div>
 
    <script>
+      let filterType = "custom_date";
       let appdynamics;
       let solarwinds;
+      const limit = 10;
+
+      let solarwindsSeverityMemory;
+      let solarwindsSeverityDisk;
+
+      let appdynamicsSeverity1;
+      let appdynamicsSeverity2;
 
       const appdynamicsTable = document.getElementById("appdynamicsTbody");
-      const appdynamicPagination = document.getElementById("appdynamicPagination");
-
       const solarwindsTable = document.getElementById("solarwindsTbody");
-      const solarwindsPagination = document.getElementById("solarwindsPagination");
 
-      let appdynamicPageIndex = 0;
-      let appdynamicLimit = 5;
+      const solarwindsMemory = document.getElementById("solarwindsMemory");
+      const solarwindsDisk = document.getElementById("solarwindsDisk");
 
-      let solarwindsPageIndex = 0;
-      let solarwindsLimit = 5;
+      const appdynamics1 = document.getElementById("appdynamics1");
+      const appdynamics2 = document.getElementById("appdynamics2");
 
-      let filter = {
-         solarwinds: {
-            severity: null,
-            layanan: null,
-            priority: null
-         },
-         appdynamics: {
-            severity: null,
-            app: null,
-            priority: null
+      const dateString = new Date().toISOString();
+      const date = dateString.substring(0, dateString.indexOf('T'));
+      const arrDate = date.split("-");
+
+      const changeFilterType = (event) => {
+         filterType = event.target.value;
+         renderFilter();
+      }
+
+      const filter = {
+         from: date,
+         to: date,
+         month: `${arrDate[0]}-${arrDate[1]}`,
+         year: arrDate[0]
+      }
+
+      const onChangeFilter = (event, type) => {
+         filter[type] = event.target.value;
+      }
+
+      const renderFilter = () => {
+         let html = "";
+         document.getElementById("custom_date").innerHTML = "";
+         document.getElementById("month").innerHTML = "";
+         document.getElementById("year").innerHTML = "";
+
+         if (filterType === "custom_date") {
+            html += `
+               <input onchange="onChangeFilter(event, 'from')" type="date" value="${filter.from}"
+                  class="bg-white border border-gray-300 text-black text-sm rounded focus:ring-blue-500 focus:border-blue-500 block w-[130px] p-2.5">
+               <input onchange="onChangeFilter(event, 'to')"  type="date" value="${filter.to}"
+                  class="bg-white border border-gray-300 text-black text-sm rounded focus:ring-blue-500 focus:border-blue-500 block w-[130px] p-2.5">
+            `;
+            document.getElementById("custom_date").innerHTML = html;
+         } else if (filterType === "month") {
+            html += `
+               <input onchange="onChangeFilter(event, 'month')" type="month" value="${filter.month}"
+                  class="bg-white border border-gray-300 text-black text-sm rounded focus:ring-blue-500 focus:border-blue-500 block w-[120px] p-2.5"
+                  placeholder="From">
+            `;
+            document.getElementById("month").innerHTML = html;
+         } else if (filterType === "year") {
+            html += `
+               <input type="text" value="${filter.year}" onkeyup="onChangeFilter(event, 'year')"
+                  class="bg-white border border-gray-300 text-black text-sm rounded focus:ring-blue-500 focus:border-blue-500 block w-[60px] p-2.5"
+                  placeholder="From">
+            `;
+            document.getElementById("year").innerHTML = html;
          }
       }
 
-      const filterOnChange = async (event, app, field) => {
-         const value = event.target.value;
-         filter[app][field] = value;
+      const getFilterParams = () => {
+         let params = "";
+         if (filterType === "custom_date") {
+            params = `start_date=${filter.from}&end_date=${filter.to}`
+         } else if (filterType === "month") {
+            params = `month=${filter.month}`;
+         } else if (filterType === "year") {
+            params = `year=${filter.year}`;
+         }
+         return params
+      }
+
+      function getTimeFromTimestamp(timestamp) {
+         const date = new Date(timestamp);
+         const hours = date.getHours();
+         const minutes = date.getMinutes();
+         // const seconds = date.getSeconds();
+
+         const paddedHours = String(hours).padStart(2, '0');
+         const paddedMinutes = String(minutes).padStart(2, '0');
+         // const paddedSeconds = String(seconds).padStart(2, '0');
+
+         return `${paddedHours}:${paddedMinutes}`;
       }
 
       const fetchAppDynamic = async () => {
-         const params = await getQueryParams('appdynamics');
-
-         const fetchAppDynamic = await fetch(`/appdynamics?${params}`);
+         const fetchAppDynamic = await fetch(`/appdynamics?limit=${limit}`);
          const response = await fetchAppDynamic.json();
          return response;
       }
 
       const fetchSolarwinds = async () => {
-         const params = await getQueryParams('solarwinds');
-
-         const fetchAppDynamic = await fetch(`/solarwinds?${params}`);
+         const fetchAppDynamic = await fetch(`/solarwinds?limit=${limit}`);
          const response = await fetchAppDynamic.json();
          return response;
-      }
-
-      const getQueryParams = async (app) => {
-         let params = [];
-         if (app === "solarwinds") {
-            params.push(`page=${solarwindsPageIndex}`);
-            params.push(`limit=${solarwindsLimit}`);
-
-            if (filter.solarwinds.severity !== null) params.push(`severity=${filter.solarwinds.severity}`);
-            if (filter.solarwinds.layanan !== null) params.push(`layanan=${filter.solarwinds.layanan}`);
-            if (filter.solarwinds.priority !== null) params.push(`priority=${filter.solarwinds.priority}`);
-         } else if (app === "appdynamics") {
-            params.push(`page=${appdynamicPageIndex}`);
-            params.push(`limit=${appdynamicLimit}`);
-
-            if (filter.appdynamics.severity !== null) params.push(`severity=${filter.appdynamics.severity}`);
-            if (filter.appdynamics.app !== null) params.push(`app=${filter.appdynamics.app}`);
-            if (filter.appdynamics.priority !== null) params.push(`priority=${filter.appdynamics.priority}`);
-         }
-
-         return params.join("&");
-      }
-
-      const formatDateTime = (isoDateStr) => {
-         const date = new Date(isoDateStr);
-
-         const months = [
-            "January", "February", "March", "April", "May", "June",
-            "July", "August", "September", "October", "November", "December"
-         ];
-
-         const year = date.getUTCFullYear();
-         const month = months[date.getUTCMonth()];
-         const day = date.getUTCDate();
-
-         const hours = date.getUTCHours().toString().padStart(2, '0');
-         const minutes = date.getUTCMinutes().toString().padStart(2, '0');
-
-         const formattedDate = `${month} ${day}, ${year}`;
-         const formattedTime = `${hours}:${minutes}`;
-
-         return `${formattedDate}, ${formattedTime}`;
       }
 
       const renderAppdynamicData = () => {
@@ -243,27 +251,18 @@
             const item = appdynamics[index];
             html += `
                <tr
-                  class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
-                  <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                  class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 hover:cursor-pointer">
+                  <td class="px-4 py-2">
+                     ${getTimeFromTimestamp(item.created_at)}
+                  </td>
+                  <th scope="row" class="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                      ${item.alert}
                   </th>
-                  <td class="px-6 py-4 text-center">
-                     ${item.severity}
-                  </td>
-                  <td class="px-6 py-4">
+                  <td class="px-4 py-2">
                      ${item.app}
                   </td>
-                  <td class="px-6 py-4 text-center">
-                     ${item.priority}
-                  </td>
-                  <td class="px-6 py-4">
-                     ${item.service_time}
-                  </td>
-                  <td class="px-6 py-4 text-center">
-                     ${item.recipient_name}
-                  </td>
-                  <td class="px-6 py-4">
-                     ${formatDateTime(item.created_at)}
+                  <td class="px-4 py-2 whitespace-nowrap">
+                     ${item.event_name}
                   </td>
                </tr>
             `;
@@ -273,29 +272,14 @@
          } else {
             appdynamicsTable.innerHTML = `
                <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-600">
-                  <th colspan="8" scope="row"
-                     class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white text-center">
+                  <th colspan="3" scope="row"
+                     class="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white text-center">
                      No data available
                   </th>
                </tr>
             `;
          }
 
-      }
-
-      const renderAppdynamicPagination = () => {
-
-         let html = `
-            <ul class="inline-flex -space-x-px rtl:space-x-reverse text-sm h-8">
-               <li>
-                  <button onclick="appdynamicPrevPage()" ${appdynamicPageIndex === 0 ? 'disabled="true"' : ''} class="flex items-center justify-center px-3 h-8 ms-0 leading-tight text-gray-500 border border-gray-300 rounded-s-lg dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 ${appdynamicPageIndex === 0 ? 'bg-gray-300 disabled:opacity-50 cursor-not-allowed' : 'bg-white hover:bg-gray-100 hover:text-gray-700 dark:hover:bg-gray-700 dark:hover:text-white'}">Previous</button>
-               </li>
-               <li>
-                  <button onclick="appdynamicNextPage()" class="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 rounded-e-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">Next</button>
-               </li>
-            </ul>
-         `;
-         appdynamicPagination.innerHTML = html;
       }
 
       const renderSolarwindsData = () => {
@@ -306,25 +290,16 @@
             html += `
                <tr
                   class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
-                  <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                     ${item.alert}
-                  </th>
-                  <td class="px-6 py-4 text-center">
-                     ${item.severity}
+                  <td class="px-4 py-2">
+                     ${getTimeFromTimestamp(item.created_at)}
                   </td>
-                  <td class="px-6 py-4">
+                  <th scope="row" class="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                     ${item.severity}
+                  </th>
+                  <td class="px-4 py-2">
                      ${item.layanan}
                   </td>
-                  <td class="px-6 py-4 text-center">
-                     ${item.priority}
-                  </td>
-                  <td class="px-6 py-4">
-                     ${item.service_time}
-                  </td>
-                  <td class="px-6 py-4">
-                     ${item.ip_address}
-                  </td>
-                  <td class="px-6 py-4">
+                  <td class="px-4 py-2">
                      ${item.node_name}
                   </td>
                </tr>
@@ -336,7 +311,7 @@
             solarwindsTable.innerHTML = `
                <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-600">
                   <th colspan="8" scope="row"
-                     class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white text-center">
+                     class="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white text-center">
                      No data available
                   </th>
                </tr>
@@ -345,58 +320,207 @@
 
       }
 
-      const renderSolarwindsPagination = () => {
+      const renderSolarwindsSeverity = () => {
+         let memoryHtml = "";
 
-         let html = `
-            <ul class="inline-flex -space-x-px rtl:space-x-reverse text-sm h-8">
-               <li>
-                  <button onclick="solarwindsPrevPage()" ${solarwindsPageIndex === 0 ? 'disabled="true"' : ''} class="flex items-center justify-center px-3 h-8 ms-0 leading-tight text-gray-500 border border-gray-300 rounded-s-lg dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 ${solarwindsPageIndex === 0 ? 'bg-gray-300 disabled:opacity-50 cursor-not-allowed' : 'bg-white hover:bg-gray-100 hover:text-gray-700 dark:hover:bg-gray-700 dark:hover:text-white'}">Previous</button>
-               </li>
-               <li>
-                  <button onclick="solarwindsNextPage()" class="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 rounded-e-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">Next</button>
-               </li>
-            </ul>
-         `;
-         solarwindsPagination.innerHTML = html;
+         const totalMemory = solarwindsSeverityMemory.reduce((acc, item) => {
+            return acc + Number(item.total);
+         }, 0);
+
+         const updatedMemoryList = solarwindsSeverityMemory.map(item => {
+            const percent = (Number(item.total) / totalMemory) * 100;
+            return {
+               ...item,
+               percent: percent.toFixed(2)
+            };
+         });
+
+         for (let index = 0; index < updatedMemoryList.length; index++) {
+            const item = updatedMemoryList[index];
+            memoryHtml += `
+               <div class="flex items-center gap-2">
+                  <div class="w-2/6 flex gap-3">
+                     <p class="font-medium text-black text-sm">${index + 1}</p>
+                     <p class="font-medium text-black text-sm">${item.severity}</p>
+                  </div>
+                  <div class="relative block h-[1.125rem] w-4/6 bg-[#e5e7eb]">
+                     <div
+                        class="absolute left-0 top-0 flex h-full w-[${item.percent}%] items-center justify-center rounded bg-red-700 text-xs font-medium text-white">
+                        ${item.total}
+                     </div>
+                  </div>
+               </div>
+            `;
+         }
+
+         if (solarwindsSeverityMemory.length === 0) {
+            solarwindsMemory.innerHTML = `<p class="text-center">No data available</p>`;
+         } else {
+            solarwindsMemory.innerHTML = memoryHtml;
+         }
+
+         let diskHtml = "";
+
+         const totalDisk = solarwindsSeverityDisk.reduce((acc, item) => {
+            return acc + Number(item.total);
+         }, 0);
+
+         const updatedDiskList = solarwindsSeverityDisk.map(item => {
+            const percent = (Number(item.total) / totalDisk) * 100;
+            return {
+               ...item,
+               percent: percent.toFixed(2)
+            };
+         });
+
+         for (let index = 0; index < updatedDiskList.length; index++) {
+            const item = updatedDiskList[index];
+            diskHtml += `
+               <div class="flex items-center gap-2">
+                  <div class="w-2/6 flex gap-3">
+                     <p class="font-medium text-black text-sm">${index + 1}</p>
+                     <p class="font-medium text-black text-sm">${item.severity}</p>
+                  </div>
+                  <div class="relative block h-[1.125rem] w-4/6 bg-[#e5e7eb]">
+                     <div
+                        class="absolute left-0 top-0 flex h-full w-[${item.percent}%] items-center justify-center rounded bg-blue-700 text-xs font-medium text-white">
+                        ${item.total}
+                     </div>
+                  </div>
+               </div>
+            `;
+         }
+         if (solarwindsSeverityDisk.length === 0) {
+            solarwindsDisk.innerHTML = `<p class="text-center">No data available</p>`;
+         } else {
+            solarwindsDisk.innerHTML = diskHtml;
+         }
+
       }
 
+      const renderAppdynamicsSeverity = () => {
+         let appdynamics1Html = "";
 
-      const appdynamicPrevPage = async () => {
-         if (appdynamicPageIndex === 0) return;
-         appdynamicPageIndex -= 1;
-         await fetchAppDynamicsData();
+         const totalAppdynamic1 = appdynamicsSeverity1.reduce((acc, item) => {
+            return acc + Number(item.total);
+         }, 0);
+
+         const updatedAppdynamics1List = appdynamicsSeverity1.map(item => {
+            const percent = (Number(item.total) / totalAppdynamic1) * 100;
+            return {
+               ...item,
+               percent: percent.toFixed(2)
+            };
+         });
+
+         for (let index = 0; index < updatedAppdynamics1List.length; index++) {
+            const item = updatedAppdynamics1List[index];
+            appdynamics1Html += `
+               <div class="flex items-center gap-2">
+                  <div class="w-2/6 flex gap-3">
+                     <p class="font-medium text-black text-sm">${index + 1}</p>
+                     <p class="font-medium text-black text-sm">${item.severity}</p>
+                  </div>
+                  <div class="relative block h-[1.125rem] w-4/6 bg-[#e5e7eb]">
+                     <div
+                        class="absolute left-0 top-0 flex h-full w-[${item.percent}%] items-center justify-center rounded bg-green-700 text-xs font-medium text-white">
+                        ${item.total}
+                     </div>
+                  </div>
+               </div>
+            `;
+         }
+
+         if (appdynamicsSeverity1.length === 0) {
+            appdynamics1.innerHTML = `<p class="text-center">No data available</p>`;
+         } else {
+            appdynamics1.innerHTML = appdynamics1Html;
+         }
+
+         let appdynamics2Html = "";
+
+         const totalAppdynamic2 = appdynamicsSeverity2.reduce((acc, item) => {
+            return acc + Number(item.total);
+         }, 0);
+
+         const updatedAppdynamic2List = appdynamicsSeverity2.map(item => {
+            const percent = (Number(item.total) / totalAppdynamic2) * 100;
+            return {
+               ...item,
+               percent: percent.toFixed(2)
+            };
+         });
+
+         for (let index = 0; index < updatedAppdynamic2List.length; index++) {
+            const item = updatedAppdynamic2List[index];
+            appdynamics2Html += `
+               <div class="flex items-center gap-2">
+                  <div class="w-2/6 flex gap-3">
+                     <p class="font-medium text-black text-sm">${index + 1}</p>
+                     <p class="font-medium text-black text-sm">${item.severity}</p>
+                  </div>
+                  <div class="relative block h-[1.125rem] w-4/6 bg-[#e5e7eb]">
+                     <div
+                        class="absolute left-0 top-0 flex h-full w-[${item.percent}%] items-center justify-center rounded bg-yellow-700 text-xs font-medium text-white">
+                        ${item.total}
+                     </div>
+                  </div>
+               </div>
+            `;
+         }
+
+         if (appdynamicsSeverity2.length === 0) {
+            appdynamics2.innerHTML = `<p class="text-center">No data available</p>`;
+         } else {
+            appdynamics2.innerHTML = appdynamics2Html;
+         }
+
       }
 
-      const appdynamicNextPage = async () => {
-         appdynamicPageIndex += 1;
-         await fetchAppDynamicsData();
-      }
-
-      const solarwindsPrevPage = async () => {
-         if (solarwindsPageIndex === 0) return;
-         solarwindsPageIndex -= 1;
-         await fetchSolarwindsData();
-      }
-
-      const solarwindsNextPage = async () => {
-         solarwindsPageIndex += 1;
-         await fetchSolarwindsData();
-      }
 
       const fetchAppDynamicsData = async () => {
          appdynamics = await fetchAppDynamic();
          renderAppdynamicData();
-         renderAppdynamicPagination();
       }
 
       const fetchSolarwindsData = async () => {
          solarwinds = await fetchSolarwinds();
          renderSolarwindsData();
-         renderSolarwindsPagination();
+      }
+
+      const fetchSolarwindsSeverity = async () => {
+         const params = getFilterParams();
+         const [memory, disk] = await Promise.all([
+            fetch(`/solarwinds/severity?limit=${limit}&${params}&alert=Memory CPU Alert`),
+            fetch(`/solarwinds/severity?limit=${limit}&${params}&alert=Disk Alert`)
+         ]);
+         solarwindsSeverityMemory = await memory.json();
+         solarwindsSeverityDisk = await disk.json();
+
+         renderSolarwindsSeverity();
+      }
+
+      const fetchAppdynamicsSeverity = async () => {
+         const params = getFilterParams();
+         const [alert1, alert2] = await Promise.all([
+            fetch(`/appdynamics/severity?limit=${limit}&${params}&alert=AppDynamics_Alert_1`),
+            fetch(`/appdynamics/severity?limit=${limit}&${params}&alert=AppDynamics_Alert_2`)
+         ]);
+         appdynamicsSeverity1 = await alert1.json();
+         appdynamicsSeverity2 = await alert2.json();
+
+         renderAppdynamicsSeverity();
+      }
+
+      const fetchSeverityChart = async () => {
+         await fetchSolarwindsSeverity();
+         await fetchAppdynamicsSeverity();
       }
 
       fetchAppDynamicsData();
       fetchSolarwindsData();
+      fetchSeverityChart();
+      renderFilter();
    </script>
 </body>
 
