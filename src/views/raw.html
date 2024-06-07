@@ -310,6 +310,7 @@
                body: JSON.stringify({ klarifikasi }),
             });
 
+            document.getElementById("klarifikasi").value = "";
             document.getElementById("modal").setAttribute('style', 'display: none;');
          } catch (error) {
             console.log(error)
