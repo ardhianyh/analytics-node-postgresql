@@ -258,13 +258,13 @@
                      ${getTimeFromTimestamp(item.created_at)}
                   </td>
                   <th scope="row" class="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                     ${item.severity}
+                     ${item.severity ?? '-'}
                   </th>
                   <td class="px-4 py-2">
-                     ${item.app}
+                     ${item.app ?? '-'}
                   </td>
                   <td class="px-4 py-2 whitespace-nowrap">
-                     ${item.event_name}
+                     ${item.event_name ?? '-'}
                   </td>
                </tr>
             `;
@@ -296,13 +296,13 @@
                      ${getTimeFromTimestamp(item.created_at)}
                   </td>
                   <th scope="row" class="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                     ${item.severity}
+                     ${item.severity ?? '-'}
                   </th>
                   <td class="px-4 py-2">
-                     ${item.layanan}
+                     ${item.layanan ?? '-'}
                   </td>
                   <td class="px-4 py-2">
-                     ${item.node_name}
+                     ${item.node_name ?? '-'}
                   </td>
                </tr>
             `;

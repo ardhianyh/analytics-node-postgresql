@@ -326,22 +326,22 @@
                   onclick="showModal('${item.id}','appdynamics')"
                   class="bg-white border-b hover:bg-gray-50 hover:cursor-pointer">
                   <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
-                     ${item.alert}
+                     ${item.alert ?? '-'}
                   </th>
                   <td class="px-6 py-4 text-center">
-                     ${item.severity}
+                     ${item.severity ?? '-'}
                   </td>
                   <td class="px-6 py-4">
-                     ${item.app}
+                     ${item.app ?? '-'}
                   </td>
                   <td class="px-6 py-4 text-center">
-                     ${item.priority}
+                     ${item.priority ?? '-'}
                   </td>
                   <td class="px-6 py-4">
-                     ${item.service_time}
+                     ${item.service_time ?? '-'}
                   </td>
                   <td class="px-6 py-4 text-center">
-                     ${item.recipient_name}
+                     ${item.recipient_name ?? '-'}
                   </td>
                   <td class="px-6 py-4 text-center">
                      ${item.normal ?? '-'}
@@ -406,25 +406,25 @@
                   onclick="showModal('${item.id}','solarwinds')"
                   class="bg-white border-b hover:bg-gray-50 hover:cursor-pointer">
                   <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
-                     ${item.alert}
+                     ${item.alert ?? '-'}
                   </th>
                   <td class="px-6 py-4 text-center">
-                     ${item.severity}
+                     ${item.severity ?? '-'}
                   </td>
                   <td class="px-6 py-4">
-                     ${item.layanan}
+                     ${item.layanan ?? '-'}
                   </td>
                   <td class="px-6 py-4 text-center">
-                     ${item.priority}
+                     ${item.priority ?? '-'}
                   </td>
                   <td class="px-6 py-4">
-                     ${item.service_time}
+                     ${item.service_time ?? '-'}
                   </td>
                   <td class="px-6 py-4">
-                     ${item.ip_address}
+                     ${item.ip_address ?? '-'}
                   </td>
                   <td class="px-6 py-4">
-                     ${item.node_name}
+                     ${item.node_name ?? '-'}
                   </td>
                </tr>
             `;
