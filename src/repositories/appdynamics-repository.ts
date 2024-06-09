@@ -1,4 +1,5 @@
 import { IDatabase, IAppDynamics, IAppDynamicsAlert, IAppDynamicsParameters, IParams, IAppDynamicsParams, IAppDynamicAlarmMessage, IFilter } from "../types";
+import { convertDateToTimestamp } from "../utils";
 
 export class AppDynamicsRepository {
    constructor(private database: IDatabase) { }
@@ -27,28 +28,35 @@ export class AppDynamicsRepository {
    }
 
    async insertAppDynamics(data: IAppDynamics, params: IAppDynamicsParameters, alarm: IAppDynamicAlarmMessage): Promise<IAppDynamics | Error> {
-      const query = await this.database.query<IAppDynamics>(
-         `SELECT * FROM appsdynamics.insert_appsdynamics(
-            alert_in := $1,
-            to_number_in := $2,
-            to_name_in := $3,
-            channel_integration_id_in := $4,
-            message_template_id_in := $5,
-            language_in := $6,
-            parameters_in := $7,
-            alarm_in := $8
-         )`,
-         [
-            data.alert,
-            data.to_number,
-            data.to_name,
-            data.channel_integration_id,
-            data.message_template_id,
-            JSON.stringify(data.language),
-            params,
-            alarm
-         ]
-      );
+      const query = await this.database.query<IAppDynamics>(`
+         INSERT INTO appsdynamics.appsdynamics(
+            alert, to_number, to_name, channel_integration_id, message_template_id, language, severity, app, priority, service_time, event_name, recipient_name, alarm_message, normal, slow, very_slow, stall, error, date_time, created_at
+         ) VALUES (
+            $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20
+         ) 
+         RETURNING *
+      `, [
+         data.alert,
+         data.to_number,
+         data.to_name,
+         data.channel_integration_id,
+         data.message_template_id,
+         JSON.stringify(data.language),
+         params.severity,
+         params.app,
+         params.priority,
+         params.service_time,
+         params.event_name,
+         params.recipient_name,
+         params.alarm_message,
+         alarm.normal,
+         alarm.slow,
+         alarm.very_slow,
+         alarm.stall,
+         alarm.error,
+         alarm.date_time,
+         convertDateToTimestamp(data.created_at)
+      ]);
 
       if (query instanceof Error) {
          return query;

@@ -20,6 +20,7 @@ export interface IAppDynamics {
    };
    alarm?: IAppDynamicAlarmMessage;
    klarifikasi: string;
+   created_at?: string;
 }
 
 export interface IAppDynamicsParameters {

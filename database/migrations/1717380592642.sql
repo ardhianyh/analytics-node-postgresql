@@ -57,67 +57,6 @@ BEGIN
 END;
 $$;
 
-
-CREATE OR REPLACE FUNCTION appsdynamics.insert_appsdynamics(
-   alert_in VARCHAR(255) DEFAULT NULL,
-   to_number_in VARCHAR(255) DEFAULT NULL,
-   to_name_in VARCHAR(255) DEFAULT NULL,
-   channel_integration_id_in VARCHAR(255) DEFAULT NULL,
-   message_template_id_in VARCHAR(255) DEFAULT NULL,
-   language_in VARCHAR(255) DEFAULT NULL,
-   parameters_in JSON DEFAULT NULL,
-   alarm_in JSON DEFAULT NULL
-)
-RETURNS VOID
-LANGUAGE plpgsql
-AS $$
-DECLARE
-   inserted_appsdynamics_id UUID;
-BEGIN
-   INSERT INTO appsdynamics.appsdynamics(
-      alert,
-      to_number,
-      to_name,
-      channel_integration_id,
-      message_template_id,
-      language,
-      severity,
-      app,
-      priority,
-      service_time,
-      event_name,
-      recipient_name,
-      alarm_message,
-      normal,
-      slow,
-      very_slow,
-      stall,
-      error,
-      date_time
-   ) VALUES (
-      alert_in,
-      to_number_in,
-      to_name_in,
-      channel_integration_id_in,
-      message_template_id_in,
-      language_in,
-      parameters_in->>'severity',
-      parameters_in->>'app',
-      parameters_in->>'priority',
-      parameters_in->>'service_time',
-      parameters_in->>'event_name',
-      parameters_in->>'recipient_name',
-      parameters_in->>'alarm_message',
-      alarm_in->>'normal',
-      alarm_in->>'slow',
-      alarm_in->>'very_slow',
-      alarm_in->>'stall',
-      alarm_in->>'error',
-      alarm_in->>'date_time'
-   );
-END;
-$$;
-
 CREATE OR REPLACE FUNCTION appsdynamics.get_chart(
    alert_in VARCHAR(255) DEFAULT NULL,
    limit_in INTEGER DEFAULT NULL,

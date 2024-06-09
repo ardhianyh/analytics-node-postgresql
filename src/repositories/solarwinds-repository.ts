@@ -1,4 +1,5 @@
 import { IDatabase, IFilter, ISolarwinds, ISolarwindsParams } from "../types";
+import { convertDateToTimestamp } from "../utils";
 
 export class SolarwindsRepository {
    constructor(private database: IDatabase) { }
@@ -32,8 +33,8 @@ export class SolarwindsRepository {
    async insertSolarwinds(data: ISolarwinds): Promise<ISolarwinds | Error> {
       const query = await this.database.query<ISolarwinds>(`
          INSERT INTO solarwinds.solarwinds 
-         (alert, severity, layanan, priority, service_time, ip_address, node_name, percent_disk_used, disk_used, memory_used, total_cpu_count, total_memory, os) 
-         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13) 
+         (alert, severity, layanan, priority, service_time, ip_address, node_name, percent_disk_used, disk_used, memory_used, total_cpu_count, total_memory, os, created_at) 
+         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14) 
          RETURNING *
       `, [
          data.alert,
@@ -49,6 +50,7 @@ export class SolarwindsRepository {
          data.total_cpu_count,
          data.total_memory,
          data.os,
+         convertDateToTimestamp(data.created_at)
       ]);
 
       if (query instanceof Error) {

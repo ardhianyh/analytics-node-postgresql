@@ -519,6 +519,174 @@
          await fetchAppdynamicsChart();
       }
 
+      const generateSolarwindsDummy = async (baseObject, startDate, days = 365) => {
+         const severities = ['Warning', 'Critical', 'Bug'];
+         const layanans = ['PPOB', 'Data Lake', 'Bvl', 'Internet', 'Wifi', 'Server', 'Monitor', 'Handphone', 'VoIP', 'DHCP', 'VLAN'];
+
+         const objects = [];
+         let currentDate = new Date(startDate);
+
+         for (let i = 0; i < days; i++) {
+            const object = { ...baseObject };
+            object.Severity = severities[Math.floor(Math.random() * severities.length)];
+            object.Layanan = layanans[Math.floor(Math.random() * layanans.length)];
+            object.created_at = currentDate.toISOString().replace('T', ' ').substring(0, 19);
+
+            currentDate.setDate(currentDate.getDate() + 1);
+
+            const response = await fetch(`/solarwinds`, {
+               method: "POST",
+               headers: {
+                  "Content-Type": "application/json",
+               },
+               body: JSON.stringify({ ...object }),
+            });
+
+            console.log(response);
+         }
+      };
+
+      const solarwindsDiskSeed = async () => {
+
+         // Base object
+         const baseObject = {
+            Alert: "Disk Alert",
+            Severity: "Warning",
+            Layanan: "DATA LAKE / HADOOP",
+            Priority: "P1",
+            'Service Time': "00.00-24.00",
+            'IP Address': "10.89.222.145",
+            'Node Name': "tw2-hdpd-p01",
+            'Percent Disk Used': "80 %",
+            'Disk Used': "2.9 T",
+            OS: "net-snmp - Linux",
+            created_at: "2024-01-01 00:00:00"
+         };
+
+         const startDate = new Date(baseObject.created_at);
+         await generateSolarwindsDummy(baseObject, startDate);
+      }
+
+      const solarwindsMemorySeed = async () => {
+         const baseObject = {
+            Alert: "Memory CPU Alert",
+            Severity: "Warning",
+            Layanan: "DATA LAKE / HADOOP",
+            Priority: "P1",
+            'Service Time': "00.00-24.00",
+            'IP Address': "10.89.222.145",
+            'Node Name': "tw2-hdpd-p01",
+            "CPU Load": "0 %",
+            "Memory Used": "85 %",
+            "Total CPU Count": "16 Cores",
+            "Total Memory": "64.0 G",
+            "OS": "Windows 2012 R2 Server",
+            created_at: "2024-01-01 00:00:00"
+         }
+
+         const startDate = new Date(baseObject.created_at);
+         await generateSolarwindsDummy(baseObject, startDate);
+      }
+
+      const appdynamicsAlert1Seed = async () => {
+         const severities = ['Warning', 'Critical', 'Bug', 'Info'];
+         const apps = ['PPOB', 'Data Lake', 'Bvl', 'Internet', 'PMobX', 'Server', 'Monitor', 'Handphone', 'VoIP', 'DHCP', 'VLAN'];
+         const startDate = new Date('2024-01-01 00:00:00');
+
+         const objects = [];
+         let currentDate1 = new Date(startDate);
+
+         for (let i = 0; i < 365; i++) {
+            const severity = severities[Math.floor(Math.random() * severities.length)];
+            const app = apps[Math.floor(Math.random() * apps.length)];
+            const created_at = currentDate1.toISOString().replace('T', ' ').substring(0, 19);
+
+            currentDate1.setDate(currentDate1.getDate() + 1);
+
+            const object = {
+               "to_number": "web",
+               "to_name": "web",
+               "message_template_id": "4ff5195b-3df1-47e7-be61-9751ddbdfbe8",
+               "channel_integration_id": "405e5dab-41bf-4034-9908-c3a40b041daf",
+               "language": {
+                  "code": "id"
+               },
+               "parameters": {
+                  "body": [
+                     { "key": "1", "value": "severity", "value_text": ":" + severity + ";" },
+                     { "key": "2", "value": "app", "value_text": ":" + app + ";" },
+                     { "key": "3", "value": "priority", "value_text": ":1;" },
+                     { "key": "4", "value": "service_time", "value_text": ":00.00-24.00;" },
+                     { "key": "5", "value": "event_name", "value_text": "[AppDynamics_Alert] PMobX TransferInq Normal < 80 %; AppDynamics_Alert_1" },
+                     { "key": "6", "value": "recipient_name", "value_text": "web" },
+                     { "key": "7", "value": "alarm_message", "value_text": "Normal :11.67% (35); Slow :0.0% (0); Very Slow :88.33% (265); Stall :0.0% (0); Error :0.0% (0); Time :2024-05-15 11:49:00;" }
+                  ]
+               },
+               created_at: created_at
+            }
+
+            const response = await fetch(`/appdynamics`, {
+               method: "POST",
+               headers: {
+                  "Content-Type": "application/json",
+               },
+               body: JSON.stringify({ ...object }),
+            });
+
+            console.log(response);
+         }
+      };
+
+      const appdynamicsAlert2Seed = async () => {
+         const severities = ['Warning', 'Critical', 'Bug', 'Info'];
+         const apps = ['PPOB', 'Data Lake', 'Bvl', 'Internet', 'PMobX', 'Server', 'Monitor', 'Handphone', 'VoIP', 'DHCP', 'VLAN'];
+         const startDate = new Date('2024-01-01 00:00:00');
+
+         const objects = [];
+         let currentDate2 = new Date(startDate);
+
+         for (let i = 0; i < 365; i++) {
+            const severity = severities[Math.floor(Math.random() * severities.length)];
+            const app = apps[Math.floor(Math.random() * apps.length)];
+            const created_at = currentDate2.toISOString().replace('T', ' ').substring(0, 19);
+
+            currentDate2.setDate(currentDate2.getDate() + 1);
+
+            const object = {
+               "to_number": "web",
+               "to_name": "web",
+               "message_template_id": "4ff5195b-3df1-47e7-be61-9751ddbdfbe8",
+               "channel_integration_id": "405e5dab-41bf-4034-9908-c3a40b041daf",
+               "language": {
+                  "code": "id"
+               },
+               "parameters": {
+                  "body": [
+                     { "key": "1", "value": "severity", "value_text": ":" + severity + ";" },
+                     { "key": "2", "value": "app", "value_text": ":" + app + ";" },
+                     { "key": "3", "value": "priority", "value_text": ":1;" },
+                     { "key": "4", "value": "service_time", "value_text": ":00.00-24.00;" },
+                     { "key": "5", "value": "event_name", "value_text": "Business Transaction response time is much higher than normal;AppDynamics_Alert_2" },
+                     { "key": "6", "value": "recipient_name", "value_text": "web" },
+                     { "key": "7", "value": "alarm_message", "value_text": "Info :Business Transaction response time is much higher than normal triggered at Mon May 13 08:39:55 WIB 2024. This policy was violated because the following conditions were met for the /corp/front/transactioninquiry.do Business Transaction for the last 30 minute(s):   For Evaluation Entity: PEB Application - Average Response Time (ms) Baseline Condition is greater than the 'default' baseline by 3.0 standard deviation(s). Observed value = 74700.0 - Calls per Minute Condition is greater than 50.0. Observed value = 220.0;" }
+                  ]
+               },
+               created_at: created_at
+            }
+
+            const response = await fetch(`/appdynamics`, {
+               method: "POST",
+               headers: {
+                  "Content-Type": "application/json",
+               },
+               body: JSON.stringify({ ...object }),
+            });
+
+            console.log(response);
+         }
+      };
+
+
       fetchAppDynamicsData();
       fetchSolarwindsData();
       fetchChart();

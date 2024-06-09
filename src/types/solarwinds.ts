@@ -14,4 +14,5 @@ export interface ISolarwinds {
    total_memory?: string;
    os: string;
    klarifikasi?: string;
+   created_at?: string;
 }

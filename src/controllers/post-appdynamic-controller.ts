@@ -123,5 +123,5 @@ export const InsertAppDynamicsController = async (
       return res.status(500).send(result.message)
    }
 
-   return res.status(201).json(true);
+   return res.status(201).json(result);
 }
