@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
-import { appDynamicRepository } from "../repositories";
+import { appDynamicRepository, chartRepository } from "../repositories";
 import { IAppDynamicAlarmMessage, IAppDynamics, IAppDynamicsAlert, IAppDynamicsParameters } from "../types";
+import { IChart } from "../types/chart";
 
 const getAppDynamicsAlertName = (apiBody: IAppDynamics, alerts: IAppDynamicsAlert[]): Promise<string | undefined> => {
 
@@ -95,15 +96,11 @@ export const InsertAppDynamicsController = async (
 ): Promise<Response | void> => {
 
    const dataBody = req.body as IAppDynamics;
-   const alerts = await appDynamicRepository.getAppDynamicsAlert();
-
-   if (alerts instanceof Error) {
-      return res.status(500).send(alerts.message)
-   }
-
-   if (!alerts) {
-      return res.status(500).send('[getAppDynamicsAlert] Encountered error undefined');
-   }
+   const alerts: IAppDynamicsAlert[] = [{
+      name: 'AppDynamics_Alert_1',
+   }, {
+      name: 'AppDynamics_Alert_2'
+   }];
 
    const appsdynamics_alert_name = await getAppDynamicsAlertName(dataBody, alerts);
    if (!appsdynamics_alert_name) {
@@ -123,5 +120,17 @@ export const InsertAppDynamicsController = async (
       return res.status(500).send(result.message)
    }
 
-   return res.status(201).json(result);
+   const chart: IChart = {
+      alert: result.alert,
+      layanan: params.app,
+      severity: params.severity,
+      created_at: result.created_at
+   }
+
+   const insertChart = await chartRepository.insertChart(chart);
+   if (insertChart instanceof Error) {
+      return res.status(500).send(insertChart.message);
+   }
+
+   return res.status(201).json({ appdynamics: result, chart: insertChart });
 }

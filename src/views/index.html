@@ -10,52 +10,41 @@
 
 <body class="bg-gray-100">
    <div class="w-full h-full block p-6">
-      <div class="flex justify-between items-center mb-5">
-         <h3 class="text-2xl font-bold text-black">
-            Dashboard Overview
-         </h3>
-         <div class="flex gap-2">
-            <div class="relative rounded bg-white">
-               <select onchange="changeFilterType(event)"
-                  class="relative inline-flex appearance-none rounded border border-gray-300 bg-white py-2 pl-4 pr-9 text-sm outline-none h-[42px]">
-                  <option value="custom_date" selected>Custom Date</option>
-                  <option value="month">Month</option>
-                  <option value="year">Year</option>
-               </select>
-               <span class="absolute right-3 top-1/2 z-10 -translate-y-1/2">
-                  <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
-                     <path fill-rule="evenodd" clip-rule="evenodd"
-                        d="M3.96967 6.21967C4.26256 5.92678 4.73744 5.92678 5.03033 6.21967L9 10.1893L12.9697 6.21967C13.2626 5.92678 13.7374 5.92678 14.0303 6.21967C14.3232 6.51256 14.3232 6.98744 14.0303 7.28033L9.53033 11.7803C9.23744 12.0732 8.76256 12.0732 8.46967 11.7803L3.96967 7.28033C3.67678 6.98744 3.67678 6.51256 3.96967 6.21967Z"
-                        fill="#64748B"></path>
-                  </svg>
-               </span>
+      <div class="rounded-sm flex flex-col gap-2 border border-stroke bg-white p-5 shadow-default w-full">
+         <div class="flex justify-between items-center mb-5">
+            <h3 class="text-2xl font-bold text-black">
+               Top 10 Layanan
+            </h3>
+            <div class="flex gap-2">
+               <div class="relative rounded bg-white">
+                  <select onchange="changeFilterType(event)"
+                     class="relative inline-flex appearance-none rounded border border-gray-300 bg-white py-2 pl-4 pr-9 text-sm outline-none h-[42px]">
+                     <option value="custom_date" selected>Custom Date</option>
+                     <option value="month">Month</option>
+                     <option value="year">Year</option>
+                  </select>
+                  <span class="absolute right-3 top-1/2 z-10 -translate-y-1/2">
+                     <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path fill-rule="evenodd" clip-rule="evenodd"
+                           d="M3.96967 6.21967C4.26256 5.92678 4.73744 5.92678 5.03033 6.21967L9 10.1893L12.9697 6.21967C13.2626 5.92678 13.7374 5.92678 14.0303 6.21967C14.3232 6.51256 14.3232 6.98744 14.0303 7.28033L9.53033 11.7803C9.23744 12.0732 8.76256 12.0732 8.46967 11.7803L3.96967 7.28033C3.67678 6.98744 3.67678 6.51256 3.96967 6.21967Z"
+                           fill="#64748B"></path>
+                     </svg>
+                  </span>
+               </div>
+               <div id="custom_date" class="flex gap-2"></div>
+               <div id="month"></div>
+               <div id="year"></div>
+               <button type="button"
+                  class="px-4 text-sm font-medium text-center text-white bg-blue-700 rounded hover:bg-blue-800"
+                  onclick="fetchChart()">Filter</button>
             </div>
-            <div id="custom_date" class="flex gap-2"></div>
-            <div id="month"></div>
-            <div id="year"></div>
-            <button type="button"
-               class="px-4 text-sm font-medium text-center text-white bg-blue-700 rounded hover:bg-blue-800"
-               onclick="fetchChart()">Filter</button>
          </div>
+         <div id="chart" class="flex flex-col gap-2"></div>
       </div>
-      <div class="flex gap-2 mb-2">
-         <div class="w-1/4">
-            <div
-               class="rounded-sm flex flex-col gap-2 border border-stroke bg-white p-5 shadow-default w-full h-[380px]">
-               <h3 class="text-lg font-bold text-center mb-3">Layanan Solarwinds Memory CPU</h3>
-               <div id="solarwindsMemory" class="flex flex-col gap-2"></div>
-            </div>
-         </div>
-         <div class="w-1/4">
-            <div
-               class="rounded-sm flex flex-col gap-2 border border-stroke bg-white p-5 shadow-default w-full h-[380px] ">
-               <h3 class="text-lg font-bold text-center mb-3">Layanan Solarwinds Disk</h3>
-               <div id="solarwindsDisk" class="flex flex-col gap-2"></div>
-            </div>
-         </div>
+      <div class="flex gap-2 mt-2">
          <div class="w-1/2">
-            <div class="rounded-sm border border-stroke bg-white p-4 shadow-default h-[380px] w-full overflow-y-auto">
-               <h3 class="text-lg font-bold text-center mb-3">Solarwinds Log</h3>
+            <div class="rounded-sm border border-stroke bg-white p-4 shadow-default h-[500px] w-full overflow-y-auto">
+               <h3 class="text-lg font-bold text-center mb-3">Solarwinds Alert</h3>
                <div class="overflow-x-auto">
                   <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
                      <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
@@ -86,25 +75,9 @@
                </div>
             </div>
          </div>
-      </div>
-      <div class="flex gap-2">
-         <div class="w-1/4">
-            <div
-               class="rounded-sm flex flex-col gap-2 border border-stroke bg-white p-5 shadow-default w-full h-[380px]">
-               <h3 class="text-lg font-bold text-center mb-3">Layanan AppDynamic Alert 1</h3>
-               <div id="appdynamics1" class="flex flex-col gap-2"></div>
-            </div>
-         </div>
-         <div class="w-1/4">
-            <div
-               class="rounded-sm flex flex-col gap-2 border border-stroke bg-white p-5 shadow-default w-full h-[380px]">
-               <h3 class="text-lg font-bold text-center mb-3">Layanan AppDynamic Alert 2</h3>
-               <div id="appdynamics2" class="flex flex-col gap-2"></div>
-            </div>
-         </div>
          <div class="w-1/2">
-            <div class="rounded-sm border border-stroke bg-white p-4 shadow-default h-[380px] w-full overflow-y-auto">
-               <h3 class="text-lg font-bold text-center mb-3">AppDynamics Log</h3>
+            <div class="rounded-sm border border-stroke bg-white p-4 shadow-default h-[500px] w-full overflow-y-auto">
+               <h3 class="text-lg font-bold text-center mb-3">AppDynamics Alert</h3>
                <div class="overflow-x-auto">
                   <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
                      <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
@@ -144,20 +117,12 @@
       let solarwinds;
       const limit = 10;
 
-      let solarwindsChartMemory;
-      let solarwindsChartDisk;
-
-      let appdynamicsChart1;
-      let appdynamicsChart2;
+      let charts;
 
       const appdynamicsTable = document.getElementById("appdynamicsTbody");
       const solarwindsTable = document.getElementById("solarwindsTbody");
 
-      const solarwindsMemory = document.getElementById("solarwindsMemory");
-      const solarwindsDisk = document.getElementById("solarwindsDisk");
-
-      const appdynamics1 = document.getElementById("appdynamics1");
-      const appdynamics2 = document.getElementById("appdynamics2");
+      const chart = document.getElementById("chart");
 
       const dateString = new Date().toISOString();
       const date = dateString.substring(0, dateString.indexOf('T'));
@@ -233,6 +198,10 @@
          // const paddedSeconds = String(seconds).padStart(2, '0');
 
          return `${paddedHours}:${paddedMinutes}`;
+      }
+
+      const goToRaw = (layanan) => {
+         window.open(`/raw?layanan=${layanan}`);
       }
 
       const fetchAppDynamic = async () => {
@@ -322,32 +291,30 @@
 
       }
 
-      const renderSolarwindsChart = () => {
-         let memoryHtml = "";
+      const renderChart = () => {
+         let html = "";
 
-         const totalMemory = solarwindsChartMemory.reduce((acc, item) => {
-            return acc + Number(item.total);
-         }, 0);
+         const total = charts[0].total;
 
-         const updatedMemoryList = solarwindsChartMemory.map(item => {
-            const percent = (Number(item.total) / totalMemory) * 100;
+         const chartList = charts.map(item => {
+            const percent = (Number(item.total) / total) * 100;
             return {
                ...item,
                percent: percent.toFixed(2)
             };
          });
 
-         for (let index = 0; index < updatedMemoryList.length; index++) {
-            const item = updatedMemoryList[index];
-            memoryHtml += `
-               <div class="flex items-center gap-2">
-                  <div class="w-2/6 flex gap-3">
+         for (let index = 0; index < chartList.length; index++) {
+            const item = chartList[index];
+            html += `
+               <div class="flex items-center gap-2 cursor-pointer" onclick="goToRaw('${item.layanan}')">
+                  <div class="w-1/5 flex gap-3">
                      <p class="font-medium text-black text-sm">${index + 1}</p>
                      <p class="font-medium text-black text-sm">${item.layanan}</p>
                   </div>
-                  <div class="relative block h-[1.125rem] w-4/6 bg-[#e5e7eb]">
+                  <div class="relative block h-[1.125rem] w-4/5 bg-white">
                      <div
-                        class="absolute left-0 top-0 flex h-full w-[${item.percent}%] items-center justify-center rounded bg-red-700 text-xs font-medium text-white">
+                        class="absolute left-0 top-0 flex h-full w-[${item.percent}%] items-center justify-end rounded bg-[#e5e7eb] text-xs font-medium text-black pr-3">
                         ${item.total}
                      </div>
                   </div>
@@ -355,130 +322,13 @@
             `;
          }
 
-         if (solarwindsChartMemory.length === 0) {
-            solarwindsMemory.innerHTML = `<p class="text-center">No data available</p>`;
+         if (charts.length === 0) {
+            chart.innerHTML = `<p class="text-center">No data available</p>`;
          } else {
-            solarwindsMemory.innerHTML = memoryHtml;
-         }
-
-         let diskHtml = "";
-
-         const totalDisk = solarwindsChartDisk.reduce((acc, item) => {
-            return acc + Number(item.total);
-         }, 0);
-
-         const updatedDiskList = solarwindsChartDisk.map(item => {
-            const percent = (Number(item.total) / totalDisk) * 100;
-            return {
-               ...item,
-               percent: percent.toFixed(2)
-            };
-         });
-
-         for (let index = 0; index < updatedDiskList.length; index++) {
-            const item = updatedDiskList[index];
-            diskHtml += `
-               <div class="flex items-center gap-2">
-                  <div class="w-2/6 flex gap-3">
-                     <p class="font-medium text-black text-sm">${index + 1}</p>
-                     <p class="font-medium text-black text-sm">${item.layanan}</p>
-                  </div>
-                  <div class="relative block h-[1.125rem] w-4/6 bg-[#e5e7eb]">
-                     <div
-                        class="absolute left-0 top-0 flex h-full w-[${item.percent}%] items-center justify-center rounded bg-blue-700 text-xs font-medium text-white">
-                        ${item.total}
-                     </div>
-                  </div>
-               </div>
-            `;
-         }
-         if (solarwindsChartDisk.length === 0) {
-            solarwindsDisk.innerHTML = `<p class="text-center">No data available</p>`;
-         } else {
-            solarwindsDisk.innerHTML = diskHtml;
+            chart.innerHTML = html;
          }
 
       }
-
-      const renderAppdynamicsChart = () => {
-         let appdynamics1Html = "";
-
-         const totalAppdynamic1 = appdynamicsChart1.reduce((acc, item) => {
-            return acc + Number(item.total);
-         }, 0);
-
-         const updatedAppdynamics1List = appdynamicsChart1.map(item => {
-            const percent = (Number(item.total) / totalAppdynamic1) * 100;
-            return {
-               ...item,
-               percent: percent.toFixed(2)
-            };
-         });
-
-         for (let index = 0; index < updatedAppdynamics1List.length; index++) {
-            const item = updatedAppdynamics1List[index];
-            appdynamics1Html += `
-               <div class="flex items-center gap-2">
-                  <div class="w-2/6 flex gap-3">
-                     <p class="font-medium text-black text-sm">${index + 1}</p>
-                     <p class="font-medium text-black text-sm">${item.app}</p>
-                  </div>
-                  <div class="relative block h-[1.125rem] w-4/6 bg-[#e5e7eb]">
-                     <div
-                        class="absolute left-0 top-0 flex h-full w-[${item.percent}%] items-center justify-center rounded bg-green-700 text-xs font-medium text-white">
-                        ${item.total}
-                     </div>
-                  </div>
-               </div>
-            `;
-         }
-
-         if (appdynamicsChart1.length === 0) {
-            appdynamics1.innerHTML = `<p class="text-center">No data available</p>`;
-         } else {
-            appdynamics1.innerHTML = appdynamics1Html;
-         }
-
-         let appdynamics2Html = "";
-
-         const totalAppdynamic2 = appdynamicsChart2.reduce((acc, item) => {
-            return acc + Number(item.total);
-         }, 0);
-
-         const updatedAppdynamic2List = appdynamicsChart2.map(item => {
-            const percent = (Number(item.total) / totalAppdynamic2) * 100;
-            return {
-               ...item,
-               percent: percent.toFixed(2)
-            };
-         });
-
-         for (let index = 0; index < updatedAppdynamic2List.length; index++) {
-            const item = updatedAppdynamic2List[index];
-            appdynamics2Html += `
-               <div class="flex items-center gap-2">
-                  <div class="w-2/6 flex gap-3">
-                     <p class="font-medium text-black text-sm">${index + 1}</p>
-                     <p class="font-medium text-black text-sm">${item.app}</p>
-                  </div>
-                  <div class="relative block h-[1.125rem] w-4/6 bg-[#e5e7eb]">
-                     <div
-                        class="absolute left-0 top-0 flex h-full w-[${item.percent}%] items-center justify-center rounded bg-yellow-700 text-xs font-medium text-white">
-                        ${item.total}
-                     </div>
-                  </div>
-               </div>
-            `;
-         }
-
-         if (appdynamicsChart2.length === 0) {
-            appdynamics2.innerHTML = `<p class="text-center">No data available</p>`;
-         } else {
-            appdynamics2.innerHTML = appdynamics2Html;
-         }
-
-      }
-
 
       const fetchAppDynamicsData = async () => {
          appdynamics = await fetchAppDynamic();
@@ -490,33 +340,10 @@
          renderSolarwindsData();
       }
 
-      const fetchSolarwindsChart = async () => {
-         const params = getFilterParams();
-         const [memory, disk] = await Promise.all([
-            fetch(`/solarwinds/chart?limit=${limit}&${params}&alert=Memory CPU Alert`),
-            fetch(`/solarwinds/chart?limit=${limit}&${params}&alert=Disk Alert`)
-         ]);
-         solarwindsChartMemory = await memory.json();
-         solarwindsChartDisk = await disk.json();
-
-         renderSolarwindsChart();
-      }
-
-      const fetchAppdynamicsChart = async () => {
-         const params = getFilterParams();
-         const [alert1, alert2] = await Promise.all([
-            fetch(`/appdynamics/chart?limit=${limit}&${params}&alert=AppDynamics_Alert_1`),
-            fetch(`/appdynamics/chart?limit=${limit}&${params}&alert=AppDynamics_Alert_2`)
-         ]);
-         appdynamicsChart1 = await alert1.json();
-         appdynamicsChart2 = await alert2.json();
-
-         renderAppdynamicsChart();
-      }
-
       const fetchChart = async () => {
-         await fetchSolarwindsChart();
-         await fetchAppdynamicsChart();
+         const response = await fetch(`/chart?limit=${limit}`);
+         charts = await response.json();
+         renderChart();
       }
 
       const generateSolarwindsDummy = async (baseObject, startDate, days = 365) => {
@@ -686,11 +513,18 @@
          }
       };
 
+      const fetchAll = () => {
+         fetchAppDynamicsData();
+         fetchSolarwindsData();
+         fetchChart();
+      }
 
-      fetchAppDynamicsData();
-      fetchSolarwindsData();
-      fetchChart();
       renderFilter();
+      fetchAll();
+
+      setInterval(() => {
+         fetchAll();
+      }, 5000);
    </script>
 </body>
 

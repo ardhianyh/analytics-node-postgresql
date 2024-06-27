@@ -5,7 +5,7 @@
    <meta charset="UTF-8">
    <meta name="viewport" content="width=device-width, initial-scale=1.0">
    <title>Raw Data</title>
-   <script src="https://cdn.tailwindcss.com"></script>
+   <script src="./tailwind.js"></script>
 </head>
 
 <body class="bg-gray-100">
@@ -59,6 +59,12 @@
                      </th>
                      <th scope="col" class="px-6 py-3">
                         Node Name
+                     </th>
+                     <th scope="col" class="px-6 py-3">
+                        Note
+                     </th>
+                     <th scope="col" class="px-6 py-3">
+                        Created At
                      </th>
                   </tr>
                </thead>
@@ -140,6 +146,9 @@
                      </th>
                      <th scope="col" class="px-6 py-3 text-center">
                         DateTime
+                     </th>
+                     <th scope="col" class="px-6 py-3 text-center">
+                        Note
                      </th>
                      <th scope="col" class="px-6 py-3">
                         Created At
@@ -361,6 +370,9 @@
                   <td class="px-6 py-4 text-center">
                      ${item.date_time ?? '-'}
                   </td>
+                  <td class="px-6 py-4 text-center">
+                     ${item.klarifikasi ?? '-'}
+                  </td>
                   <td class="px-6 py-4">
                      ${formatDateTime(item.created_at)}
                   </td>
@@ -425,6 +437,12 @@
                   </td>
                   <td class="px-6 py-4">
                      ${item.node_name ?? '-'}
+                  </td>
+                  <td class="px-6 py-4 text-center">
+                     ${item.klarifikasi ?? '-'}
+                  </td>
+                  <td class="px-6 py-4">
+                     ${formatDateTime(item.created_at)}
                   </td>
                </tr>
             `;
@@ -494,8 +512,19 @@
          renderSolarwindsPagination();
       }
 
+      const queryString = window.location.search;
+      const urlParams = new URLSearchParams(queryString);
+
+      const layananParam = urlParams.get('layanan')
+      if (layananParam) {
+         filter.appdynamics.app = layananParam;
+         filter.solarwinds.layanan = layananParam;
+      }
+
       fetchAppDynamicsData();
       fetchSolarwindsData();
+
+
    </script>
 </body>
 

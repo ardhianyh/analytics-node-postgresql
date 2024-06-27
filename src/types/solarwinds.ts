@@ -9,6 +9,7 @@ export interface ISolarwinds {
    node_name: string;
    percent_disk_used?: string;
    disk_used?: string;
+   cpu_load?: string;
    memory_used?: string;
    total_cpu_count?: string;
    total_memory?: string;

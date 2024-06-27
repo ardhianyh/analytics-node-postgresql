@@ -6,7 +6,7 @@ export class SolarwindsRepository {
 
    async getSolarwinds(params: ISolarwindsParams): Promise<ISolarwinds[] | Error | undefined> {
       const query = await this.database.query<ISolarwinds>(`
-         SELECT * FROM solarwinds.get_solarwinds(
+         SELECT * FROM public.get_solarwinds(
             page_in := $1,
             limit_in := $2,
             severity_in := $3,
@@ -32,9 +32,9 @@ export class SolarwindsRepository {
 
    async insertSolarwinds(data: ISolarwinds): Promise<ISolarwinds | Error> {
       const query = await this.database.query<ISolarwinds>(`
-         INSERT INTO solarwinds.solarwinds 
-         (alert, severity, layanan, priority, service_time, ip_address, node_name, percent_disk_used, disk_used, memory_used, total_cpu_count, total_memory, os, created_at) 
-         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14) 
+         INSERT INTO public.solarwinds 
+         (alert, severity, layanan, priority, service_time, ip_address, node_name, percent_disk_used, disk_used, cpu_load, memory_used, total_cpu_count, total_memory, os, created_at) 
+         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15) 
          RETURNING *
       `, [
          data.alert,
@@ -46,6 +46,7 @@ export class SolarwindsRepository {
          data.node_name,
          data.percent_disk_used,
          data.disk_used,
+         data.cpu_load,
          data.memory_used,
          data.total_cpu_count,
          data.total_memory,
@@ -58,34 +59,6 @@ export class SolarwindsRepository {
       }
 
       return query.rows[0];
-   }
-
-   async getSolarwindsChart(filter: IFilter): Promise<{ layanan: string, total: number }[] | Error | undefined> {
-      const query = await this.database.query<{ layanan: string, total: number }>(`
-         SELECT * FROM solarwinds.get_chart(
-            alert_in := $1,
-            limit_in := $2,
-            start_date_in := $3,
-            end_date_in := $4,
-            month_in := $5,
-            year_in := $6
-         )
-      `,
-         [
-            filter.alert ?? null,
-            filter.limit ?? 10,
-            filter.start_date ?? null,
-            filter.end_date ?? null,
-            filter.month ?? null,
-            filter.year ?? null
-         ]
-      );
-
-      if (query instanceof Error) {
-         return query;
-      }
-
-      return query.rows;
    }
 
    async updateKlarifikasi(id: string, klarifikasi: string): Promise<{ klarifikasi: string } | Error | undefined> {

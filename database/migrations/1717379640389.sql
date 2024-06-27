@@ -1,8 +1,4 @@
-CREATE TABLE appsdynamics.appsdynamics_alert (
-  name VARCHAR(255) NOT NULL
-);
-
-CREATE TABLE appsdynamics.appsdynamics (
+CREATE TABLE public.appsdynamics (
   id SERIAL PRIMARY KEY, /* 4 bytes; 1 to 2.147.483.647 */
   alert VARCHAR(255) NULL,
   to_number VARCHAR(255) NULL,
@@ -27,12 +23,12 @@ CREATE TABLE appsdynamics.appsdynamics (
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
-CREATE INDEX idx_appdynamics_app ON appsdynamics.appsdynamics(app);
-CREATE INDEX idx_appdynamics_alert ON appsdynamics.appsdynamics(alert);
-CREATE INDEX idx_appdynamics_severity ON appsdynamics.appsdynamics(severity);
-CREATE INDEX idx_appdynamics_created_at ON appsdynamics.appsdynamics(created_at);
+CREATE INDEX idx_appdynamics_app ON public.appsdynamics(app);
+CREATE INDEX idx_appdynamics_alert ON public.appsdynamics(alert);
+CREATE INDEX idx_appdynamics_severity ON public.appsdynamics(severity);
+CREATE INDEX idx_appdynamics_created_at ON public.appsdynamics(created_at);
 
-CREATE TABLE solarwinds.solarwinds (
+CREATE TABLE public.solarwinds (
   id SERIAL PRIMARY KEY,  /* 4 bytes; 1 to 2.147.483.647 */
   alert VARCHAR(255) NULL,
   severity VARCHAR(255) NULL,
@@ -43,6 +39,7 @@ CREATE TABLE solarwinds.solarwinds (
   node_name VARCHAR(255) NULL,
   percent_disk_used VARCHAR(255) NULL,
   disk_used VARCHAR(255) NULL,
+  cpu_load VARCHAR(255) NULL,
   memory_used VARCHAR(255) NULL,
   total_cpu_count VARCHAR(255) NULL,
   total_memory VARCHAR(255) NULL,
@@ -51,9 +48,19 @@ CREATE TABLE solarwinds.solarwinds (
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
-CREATE INDEX idx_solarwinds_layanan ON solarwinds.solarwinds(layanan);
-CREATE INDEX idx_solarwinds_alert ON solarwinds.solarwinds(alert);
-CREATE INDEX idx_solarwinds_severity ON solarwinds.solarwinds(severity);
-CREATE INDEX idx_solarwinds_created_at ON solarwinds.solarwinds(created_at);
+CREATE INDEX idx_solarwinds_layanan ON public.solarwinds(layanan);
+CREATE INDEX idx_solarwinds_alert ON public.solarwinds(alert);
+CREATE INDEX idx_solarwinds_severity ON public.solarwinds(severity);
+CREATE INDEX idx_solarwinds_created_at ON public.solarwinds(created_at);
 
+CREATE TABLE public.chart (
+  alert VARCHAR(255) NULL,
+  layanan VARCHAR(255) NULL,
+  severity VARCHAR(255) NULL,
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
 
+CREATE INDEX idx_chart_layanan ON public.chart(layanan);
+CREATE INDEX idx_chart_alert ON public.chart(alert);
+CREATE INDEX idx_chart_severity ON public.chart(severity);
+CREATE INDEX idx_chart_created_at ON public.chart(created_at);

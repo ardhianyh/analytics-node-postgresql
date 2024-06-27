@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
-import { appDynamicRepository, solarwindsRepository } from "../repositories";
+import { chartRepository, solarwindsRepository } from "../repositories";
 import { ISolarwinds } from "../types";
+import { IChart } from "../types/chart";
 
 const keyMapping: { [key: string]: string } = {
    "Alert": "alert",
@@ -27,7 +28,23 @@ export const InsertSolarwindsController = async (
    const input = transformObject(req.body) as ISolarwinds;
    const result = await solarwindsRepository.insertSolarwinds(input);
 
-   return res.status(201).json(result);
+   if (result instanceof Error) {
+      return res.status(500).send(result.message);
+   }
+
+   const chart: IChart = {
+      alert: input.alert,
+      layanan: input.layanan,
+      severity: input.severity,
+      created_at: result.created_at
+   }
+
+   const insertChart = await chartRepository.insertChart(chart);
+   if (insertChart instanceof Error) {
+      return res.status(500).send(insertChart.message);
+   }
+
+   return res.status(201).json({ solarwinds: result, chart: insertChart });
 }
 
 const transformObject = (input: { [key: string]: any }): { [key: string]: any } => {

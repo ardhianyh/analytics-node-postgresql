@@ -2,6 +2,7 @@ import { Request, Response, Router } from "express";
 import { appDynamicsRouter } from "./appdynamics";
 import { solarwindsRouter } from "./solarwinds";
 import path from "path";
+import { chartRouter } from "./chart";
 
 const views = path.resolve('./src/views');
 
@@ -17,5 +18,6 @@ router.get('/raw', (_: Request, response: Response) => {
 
 router.use('/appdynamics', appDynamicsRouter);
 router.use('/solarwinds', solarwindsRouter);
+router.use('/chart', chartRouter);
 
 export const route = router;

@@ -1,9 +1,8 @@
 import { Router } from "express";
-import { GetSolarwindsChartController, GetSolarwindsController, InsertSolarwindsController, PutSolarwindsKlarifikasiController } from "../controllers";
+import { GetSolarwindsController, InsertSolarwindsController, PutSolarwindsKlarifikasiController } from "../controllers";
 const router = Router();
 
 router.get('/', GetSolarwindsController);
-router.get('/chart', GetSolarwindsChartController);
 router.post('/', InsertSolarwindsController);
 router.put('/klarifikasi/:id', PutSolarwindsKlarifikasiController);
 
