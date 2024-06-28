@@ -22,4 +22,6 @@ export interface IFilter {
    end_date?: string;
    month?: string;
    year?: string;
+   start_time?: string;
+   end_time?: string;
 }

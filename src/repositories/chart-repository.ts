@@ -7,21 +7,23 @@ export class ChartRepository {
    async getChart(filter: IFilter): Promise<{ app: string, total: number }[] | Error | undefined> {
       const query = await this.database.query<{ app: string, total: number }>(`
          SELECT * FROM public.get_chart(
-            alert_in := $1,
-            limit_in := $2,
-            start_date_in := $3,
-            end_date_in := $4,
-            month_in := $5,
-            year_in := $6
+            limit_in := $1,
+            start_date_in := $2,
+            end_date_in := $3,
+            month_in := $4,
+            year_in := $5,
+            start_time_in := $6,
+            end_time_in := $7
          )
       `,
          [
-            filter.alert ?? null,
             filter.limit ?? 10,
             filter.start_date ?? null,
             filter.end_date ?? null,
             filter.month ?? null,
-            filter.year ?? null
+            filter.year ?? null,
+            filter.start_time ?? null,
+            filter.end_time ?? null
          ]
       );
 

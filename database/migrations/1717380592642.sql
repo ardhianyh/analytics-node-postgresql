@@ -87,12 +87,13 @@ $$;
 
 
 CREATE OR REPLACE FUNCTION public.get_chart(
-   alert_in VARCHAR(255) DEFAULT NULL,
    limit_in INTEGER DEFAULT NULL,
    start_date_in DATE DEFAULT NULL,
    end_date_in DATE DEFAULT NULL,
    month_in TEXT DEFAULT NULL,
-   year_in TEXT DEFAULT NULL
+   year_in TEXT DEFAULT NULL,
+   start_time_in TIME DEFAULT NULL,
+   end_time_in TIME DEFAULT NULL
 )
 RETURNS TABLE (
    layanan VARCHAR,
@@ -104,14 +105,17 @@ DECLARE
 BEGIN
    RETURN QUERY
    SELECT 
-      c.layanan as layanan, 
+      c.layanan AS layanan, 
       COUNT(c.layanan) AS total
    FROM public.chart c
-   WHERE (alert_in IS NULL OR c.alert = alert_in)
-   AND LOWER(c.severity) != 'info'
+   WHERE LOWER(c.severity) != 'info'
    AND (
-	   (start_date_in IS NULL AND end_date_in IS NULL) OR 
-	   (DATE(c.created_at) BETWEEN start_date_in AND end_date_in)
+       (start_date_in IS NULL AND end_date_in IS NULL) OR 
+       (DATE(c.created_at) BETWEEN start_date_in AND end_date_in)
+   )
+   AND (
+       (start_time_in IS NULL AND end_time_in IS NULL) OR 
+       (SELECT c.created_at::time(0) BETWEEN start_time_in AND end_time_in)
    )
    AND (month_in IS NULL OR TO_CHAR(c.created_at, 'YYYY-MM') = month_in)
    AND (year_in IS NULL OR TO_CHAR(c.created_at, 'YYYY') = year_in)

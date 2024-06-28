@@ -12,16 +12,29 @@
    <div class="w-full h-full block p-6">
       <div class="rounded-sm flex flex-col gap-2 border border-stroke bg-white p-5 shadow-default w-full">
          <div class="flex justify-between items-center mb-5">
-            <h3 class="text-2xl font-bold text-black">
-               Top 10 Layanan
-            </h3>
+            <h3 class="text-3xl font-bold text-black" id="title"></h3>
             <div class="flex gap-2">
+               <div class="relative rounded bg-white">
+                  <select onchange="changeLimit(event)"
+                     class="relative inline-flex appearance-none rounded border border-gray-300 bg-white py-2 pl-4 pr-9 text-sm outline-none h-[42px]">
+                     <option value="10" selected>Top 10</option>
+                     <option value="20">Top 20</option>
+                  </select>
+                  <span class="absolute right-3 top-1/2 z-10 -translate-y-1/2">
+                     <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path fill-rule="evenodd" clip-rule="evenodd"
+                           d="M3.96967 6.21967C4.26256 5.92678 4.73744 5.92678 5.03033 6.21967L9 10.1893L12.9697 6.21967C13.2626 5.92678 13.7374 5.92678 14.0303 6.21967C14.3232 6.51256 14.3232 6.98744 14.0303 7.28033L9.53033 11.7803C9.23744 12.0732 8.76256 12.0732 8.46967 11.7803L3.96967 7.28033C3.67678 6.98744 3.67678 6.51256 3.96967 6.21967Z"
+                           fill="#64748B"></path>
+                     </svg>
+                  </span>
+               </div>
                <div class="relative rounded bg-white">
                   <select onchange="changeFilterType(event)"
                      class="relative inline-flex appearance-none rounded border border-gray-300 bg-white py-2 pl-4 pr-9 text-sm outline-none h-[42px]">
                      <option value="custom_date" selected>Custom Date</option>
                      <option value="month">Month</option>
                      <option value="year">Year</option>
+                     <option value="custom_time">Custom Time</option>
                   </select>
                   <span class="absolute right-3 top-1/2 z-10 -translate-y-1/2">
                      <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -32,6 +45,7 @@
                   </span>
                </div>
                <div id="custom_date" class="flex gap-2"></div>
+               <div id="custom_time" class="flex gap-2"></div>
                <div id="month"></div>
                <div id="year"></div>
                <button type="button"
@@ -41,86 +55,24 @@
          </div>
          <div id="chart" class="flex flex-col gap-2"></div>
       </div>
-      <div class="flex gap-2 mt-2">
-         <div class="w-1/2">
-            <div class="rounded-sm border border-stroke bg-white p-4 shadow-default h-[500px] w-full overflow-y-auto">
-               <h3 class="text-lg font-bold text-center mb-3">Solarwinds Alert</h3>
-               <div class="overflow-x-auto">
-                  <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
-                     <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-                        <tr>
-                           <th scope="col" class="px-4 py-2">
-                              Waktu
-                           </th>
-                           <th scope="col" class="px-4 py-2">
-                              Severity
-                           </th>
-                           <th scope="col" class="px-4 py-2">
-                              Layanan
-                           </th>
-                           <th scope="col" class="px-4 py-2">
-                              Node Name
-                           </th>
-                        </tr>
-                     </thead>
-                     <tbody id="solarwindsTbody">
-                        <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-600">
-                           <th colspan="4" scope="row"
-                              class="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white text-center">
-                              No data available
-                           </th>
-                        </tr>
-                     </tbody>
-                  </table>
-               </div>
-            </div>
-         </div>
-         <div class="w-1/2">
-            <div class="rounded-sm border border-stroke bg-white p-4 shadow-default h-[500px] w-full overflow-y-auto">
-               <h3 class="text-lg font-bold text-center mb-3">AppDynamics Alert</h3>
-               <div class="overflow-x-auto">
-                  <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
-                     <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-                        <tr>
-                           <th scope="col" class="px-4 py-2">
-                              Waktu
-                           </th>
-                           <th scope="col" class="px-4 py-2">
-                              Severity
-                           </th>
-                           <th scope="col" class="px-4 py-2">
-                              App
-                           </th>
-                           <th scope="col" class="px-4 py-2">
-                              Event Name
-                           </th>
-                        </tr>
-                     </thead>
-                     <tbody id="appdynamicsTbody">
-                        <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-600">
-                           <th colspan="4" scope="row"
-                              class="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white text-center">
-                              No data available
-                           </th>
-                        </tr>
-                     </tbody>
-                  </table>
-               </div>
-            </div>
-         </div>
-      </div>
    </div>
 
    <script>
       let filterType = "custom_date";
       let appdynamics;
       let solarwinds;
-      const limit = 10;
+
+      let limit = 10;
+
+      const renderTitle = () => {
+         document.getElementById("title").innerHTML = `Top ${limit} Layanan`;
+      }
+
+      const changeLimit = (event) => {
+         limit = parseInt(event.target.value);
+      }
 
       let charts;
-
-      const appdynamicsTable = document.getElementById("appdynamicsTbody");
-      const solarwindsTable = document.getElementById("solarwindsTbody");
 
       const chart = document.getElementById("chart");
 
@@ -137,7 +89,9 @@
          from: date,
          to: date,
          month: `${arrDate[0]}-${arrDate[1]}`,
-         year: arrDate[0]
+         year: arrDate[0],
+         start_time: null,
+         end_time: null
       }
 
       const onChangeFilter = (event, type) => {
@@ -147,6 +101,7 @@
       const renderFilter = () => {
          let html = "";
          document.getElementById("custom_date").innerHTML = "";
+         document.getElementById("custom_time").innerHTML = "";
          document.getElementById("month").innerHTML = "";
          document.getElementById("year").innerHTML = "";
 
@@ -158,6 +113,14 @@
                   class="bg-white border border-gray-300 text-black text-sm rounded focus:ring-blue-500 focus:border-blue-500 block w-[130px] p-2.5">
             `;
             document.getElementById("custom_date").innerHTML = html;
+         } else if (filterType === "custom_time") {
+            html += `
+               <input type="time" onchange="onChangeFilter(event, 'start_time')"
+                  class="bg-white border border-gray-300 text-black text-sm rounded focus:ring-blue-500 focus:border-blue-500 block w-[130px] p-2.5">
+               <input type="time" onchange="onChangeFilter(event, 'end_time')"
+                  class="bg-white border border-gray-300 text-black text-sm rounded focus:ring-blue-500 focus:border-blue-500 block w-[130px] p-2.5">
+            `;
+            document.getElementById("custom_time").innerHTML = html;
          } else if (filterType === "month") {
             html += `
                <input onchange="onChangeFilter(event, 'month')" type="month" value="${filter.month}"
@@ -179,6 +142,8 @@
          let params = "";
          if (filterType === "custom_date") {
             params = `start_date=${filter.from}&end_date=${filter.to}`
+         } else if (filterType === "custom_time") {
+            params = `start_date=${date}&end_date=${date}&start_time=${filter.start_time}:00&end_time=${filter.end_time}:00`
          } else if (filterType === "month") {
             params = `month=${filter.month}`;
          } else if (filterType === "year") {
@@ -204,95 +169,13 @@
          window.open(`/raw?layanan=${layanan}`);
       }
 
-      const fetchAppDynamic = async () => {
-         const fetchAppDynamic = await fetch(`/appdynamics?limit=${limit}`);
-         const response = await fetchAppDynamic.json();
-         return response;
-      }
-
-      const fetchSolarwinds = async () => {
-         const fetchAppDynamic = await fetch(`/solarwinds?limit=${limit}`);
-         const response = await fetchAppDynamic.json();
-         return response;
-      }
-
-      const renderAppdynamicData = () => {
-         let html = "";
-         for (let index = 0; index < appdynamics.length; index++) {
-            const item = appdynamics[index];
-            html += `
-               <tr
-                  class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 hover:cursor-pointer">
-                  <td class="px-4 py-2">
-                     ${getTimeFromTimestamp(item.created_at)}
-                  </td>
-                  <th scope="row" class="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                     ${item.severity ?? '-'}
-                  </th>
-                  <td class="px-4 py-2">
-                     ${item.app ?? '-'}
-                  </td>
-                  <td class="px-4 py-2 whitespace-nowrap">
-                     ${item.event_name ?? '-'}
-                  </td>
-               </tr>
-            `;
-         }
-         if (appdynamics.length > 0) {
-            appdynamicsTable.innerHTML = html;
-         } else {
-            appdynamicsTable.innerHTML = `
-               <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-600">
-                  <th colspan="4" scope="row"
-                     class="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white text-center">
-                     No data available
-                  </th>
-               </tr>
-            `;
-         }
-
-      }
-
-      const renderSolarwindsData = () => {
-         let html = "";
-         for (let index = 0; index < solarwinds.length; index++) {
-            const item = solarwinds[index];
-
-            html += `
-               <tr
-                  class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
-                  <td class="px-4 py-2">
-                     ${getTimeFromTimestamp(item.created_at)}
-                  </td>
-                  <th scope="row" class="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                     ${item.severity ?? '-'}
-                  </th>
-                  <td class="px-4 py-2">
-                     ${item.layanan ?? '-'}
-                  </td>
-                  <td class="px-4 py-2">
-                     ${item.node_name ?? '-'}
-                  </td>
-               </tr>
-            `;
-         }
-         if (solarwinds.length > 0) {
-            solarwindsTable.innerHTML = html;
-         } else {
-            solarwindsTable.innerHTML = `
-               <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-600">
-                  <th colspan="8" scope="row"
-                     class="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white text-center">
-                     No data available
-                  </th>
-               </tr>
-            `;
-         }
-
-      }
-
       const renderChart = () => {
          let html = "";
+
+         if (charts.length === 0) {
+            chart.innerHTML = `<p class="text-center">No data available</p>`;
+            return;
+         }
 
          const total = charts[0].total;
 
@@ -321,27 +204,13 @@
                </div>
             `;
          }
+         chart.innerHTML = html;
 
-         if (charts.length === 0) {
-            chart.innerHTML = `<p class="text-center">No data available</p>`;
-         } else {
-            chart.innerHTML = html;
-         }
-
-      }
-
-      const fetchAppDynamicsData = async () => {
-         appdynamics = await fetchAppDynamic();
-         renderAppdynamicData();
-      }
-
-      const fetchSolarwindsData = async () => {
-         solarwinds = await fetchSolarwinds();
-         renderSolarwindsData();
       }
 
       const fetchChart = async () => {
-         const response = await fetch(`/chart?limit=${limit}`);
+         const params = getFilterParams();
+         const response = await fetch(`/chart?limit=${limit}&${params}`);
          charts = await response.json();
          renderChart();
       }
@@ -514,17 +383,16 @@
       };
 
       const fetchAll = () => {
-         fetchAppDynamicsData();
-         fetchSolarwindsData();
          fetchChart();
+         renderTitle();
       }
 
       renderFilter();
       fetchAll();
 
-      setInterval(() => {
-         fetchAll();
-      }, 5000);
+      // setInterval(() => {
+      //    fetchAll();
+      // }, 5000);
    </script>
 </body>
 
