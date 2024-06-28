@@ -1,10 +1,11 @@
 import { Router } from "express";
-import { GetAppDynamicsController, InsertAppDynamicsController, PutAppDynamicsKlarifikasiController } from "../controllers";
+import { ExportAppdynamicsController, GetAppDynamicsController, InsertAppDynamicsController, PutAppDynamicsKlarifikasiController } from "../controllers";
 const router = Router();
 
 router.get('/', GetAppDynamicsController);
 router.post('/', InsertAppDynamicsController);
 
+router.get('/export', ExportAppdynamicsController);
 router.put('/klarifikasi/:id', PutAppDynamicsKlarifikasiController);
 
 

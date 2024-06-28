@@ -15,11 +15,11 @@ export class SolarwindsRepository {
          )
       `,
          [
-            params.page,
-            params.limit,
-            params.severity,
-            params.layanan,
-            params.priority
+            params.page ?? 0,
+            params.limit ?? 10,
+            params.severity ?? null,
+            params.layanan ?? null,
+            params.priority ?? null
          ]
       );
 

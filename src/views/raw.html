@@ -15,24 +15,9 @@
          <div class="flex justify-between items-center mb-6">
             <p class="text-xl font-bold">Solarwinds Log</p>
             <div class="flex items-center gap-2">
-               <select onchange="filterOnChange(event, 'solarwinds', 'severity')"
-                  class="block w-[150px] p-2 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-                  <option disabled selected>Pilih Severity</option>
-                  <option value="Warning">Warning</option>
-               </select>
-               <select onchange="filterOnChange(event, 'solarwinds', 'layanan')"
-                  class="block w-[150px] p-2 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-                  <option disabled selected>Pilih Layanan</option>
-                  <option value="Bvl">Bvl</option>
-                  <option value="DATA LAKE / HADOOP">DATA LAKE / HADOOP</option>
-               </select>
-               <select onchange="filterOnChange(event, 'solarwinds', 'priority')"
-                  class="block w-[150px] p-2 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-                  <option disabled selected>Pilih Priority</option>
-                  <option value="P1">P1</option>
-               </select>
-               <button type="button" onclick="fetchSolarwindsData()"
-                  class="px-3 py-2 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Filter</button>
+               <button type="button" onclick="downloadCsv('solarwinds')"
+                  class="px-3 py-2 text-sm font-medium text-center text-white bg-green-700 rounded hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-green-300">Download
+                  CSV</button>
             </div>
          </div>
          <div class="relative overflow-x-auto shadow-md rounded-sm">
@@ -86,25 +71,9 @@
          <div class="flex justify-between items-center mb-6">
             <p class="text-xl font-bold">AppDynamics Log</p>
             <div class="flex items-center gap-2">
-               <select onchange="filterOnChange(event, 'appdynamics', 'severity')"
-                  class="block w-[150px] p-2 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-                  <option disabled selected>Pilih Severity</option>
-                  <option value="CRITICAL">CRITICAL</option>
-                  <option value="INFO">INFO</option>
-               </select>
-               <select onchange="filterOnChange(event, 'appdynamics', 'app')"
-                  class="block w-[150px] p-2 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-                  <option disabled selected>Pilih App</option>
-                  <option value="PMobX">PMobX</option>
-                  <option value="PEB">PEB</option>
-               </select>
-               <select onchange="filterOnChange(event, 'appdynamics', 'priority')"
-                  class="block w-[150px] p-2 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-                  <option disabled selected>Pilih Priority</option>
-                  <option value="1">1</option>
-               </select>
-               <button type="button" onclick="fetchAppDynamicsData()"
-                  class="px-3 py-2 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Filter</button>
+               <button type="button" onclick="downloadCsv('appdynamics')"
+                  class="px-3 py-2 text-sm font-medium text-center text-white bg-green-700 rounded hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-green-300">Download
+                  CSV</button>
             </div>
          </div>
          <div class="relative overflow-x-auto shadow-md rounded-sm">
@@ -175,7 +144,7 @@
       <div tabindex="-1"
          class="fixed top-0 left-0 right-0 z-[1000] !items-center w-full p-4 overflow-x-hidden flex justify-center overflow-y-auto md:inset-0 h-[calc(100%-1rem)] max-h-full">
          <div class="relative w-full max-w-2xl max-h-full">
-            <div class="relative bg-white rounded-lg shadow">
+            <div class="relative bg-white rounded shadow">
                <div class="flex items-center justify-between p-3 border-b rounded-t">
                   <h3 class="text-xl font-semibold">Klarifikasi</h3>
                </div>
@@ -210,10 +179,10 @@
       const solarwindsPagination = document.getElementById("solarwindsPagination");
 
       let appdynamicPageIndex = 0;
-      let appdynamicLimit = 5;
+      let appdynamicLimit = 10;
 
       let solarwindsPageIndex = 0;
-      let solarwindsLimit = 5;
+      let solarwindsLimit = 10;
 
       let selectedId = null;
 
@@ -228,6 +197,17 @@
             app: null,
             priority: null
          }
+      }
+
+      const downloadCsv = async (type) => {
+         const url = new URLSearchParams(window.location.search);
+         const layanan = url.get('layanan');
+         if (!layanan) {
+            alert("Layanan is required");
+            window.location.href = "/"
+         }
+
+         window.open(`/${type}/export?limit=${type === 'solarwinds' ? solarwindsLimit : appdynamicLimit}&page=${type === 'solarwinds' ? solarwindsPageIndex : appdynamicPageIndex}&layanan=${layanan}`, '_blank')
       }
 
       const filterOnChange = async (event, app, field) => {
