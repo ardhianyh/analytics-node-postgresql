@@ -8,3 +8,5 @@ export * from './get-chart-controller';
 export * from './export-solarwinds-controller';
 export * from './export-appdynamics-controller';
 export * from './upload-solarwinds-controller';
+export * from './get-report-solarwinds-controller';
+export * from './export-solarwinds-upload-controller';

@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>Report Solarwinds</title>
+   <script src="./tailwind.js"></script>
+</head>
+
+<body class="bg-gray-100">
+   <div class="w-full h-full flex-1 p-6">
+      <div
+         class="rounded-sm border border-stroke bg-white p-6 shadow-default dark:border-strokedark dark:bg-boxdark mb-6">
+         <div class="flex justify-between items-center mb-6">
+            <p class="text-xl font-bold">Report Solarwinds</p>
+            <div class="flex items-center gap-2">
+               <button type="button" onclick="exportCsv()"
+                  class="px-3 py-2 text-sm font-medium text-center text-white bg-green-700 rounded hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-green-300">Export</button>
+            </div>
+         </div>
+         <div class="relative overflow-x-auto shadow-md rounded-sm mt-4">
+            <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+               <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400"
+                  id="tableHead">
+                  <th scope="col" class="px-6 py-3">
+                     Alert
+                  </th>
+                  <th scope="col" class="px-6 py-3 text-center">
+                     Severity
+                  </th>
+                  <th scope="col" class="px-6 py-3">
+                     No Layanan
+                  </th>
+                  <th scope="col" class="px-6 py-3">
+                     Layanan
+                  </th>
+                  <th scope="col" class="px-6 py-3 text-center">
+                     Priority
+                  </th>
+                  <th scope="col" class="px-6 py-3">
+                     Service Time
+                  </th>
+                  <th scope="col" class="px-6 py-3">
+                     Hostname
+                  </th>
+                  <th scope="col" class="px-6 py-3">
+                     IP Address
+                  </th>
+                  <th scope="col" class="px-6 py-3">
+                     Node Name
+                  </th>
+                  <th scope="col" class="px-6 py-3">
+                     Percent Disk Used
+                  </th>
+                  <th scope="col" class="px-6 py-3">
+                     CPU Load
+                  </th>
+                  <th scope="col" class="px-6 py-3">
+                     Max CPU Used
+                  </th>
+                  <th scope="col" class="px-6 py-3">
+                     Total CPU Count
+                  </th>
+                  <th scope="col" class="px-6 py-3">
+                     Memory Used
+                  </th>
+                  <th scope="col" class="px-6 py-3">
+                     Max Memory Used
+                  </th>
+                  <th scope="col" class="px-6 py-3">
+                     Total Memory
+                  </th>
+                  <th scope="col" class="px-6 py-3">
+                     OS
+                  </th>
+                  <th scope="col" class="px-6 py-3">
+                     Note
+                  </th>
+                  <th scope="col" class="px-6 py-3">
+                     Created At
+                  </th>
+               </thead>
+               <tbody id="solarwindsTbody">
+                  <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-600">
+                     <th colspan="18" scope="row"
+                        class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white text-center">
+                        No data available
+                     </th>
+                  </tr>
+               </tbody>
+            </table>
+         </div>
+      </div>
+
+   </div>
+
+   <script>
+      const solarwindsTable = document.getElementById("solarwindsTbody");
+      let solarwinds = [];
+
+      const formatDateTime = (isoDateStr) => {
+         const date = new Date(isoDateStr);
+
+         const months = [
+            "January", "February", "March", "April", "May", "June",
+            "July", "August", "September", "October", "November", "December"
+         ];
+
+         const year = date.getUTCFullYear();
+         const month = months[date.getUTCMonth()];
+         const day = date.getUTCDate();
+
+         const hours = date.getUTCHours().toString().padStart(2, '0');
+         const minutes = date.getUTCMinutes().toString().padStart(2, '0');
+
+         const formattedDate = `${month} ${day}, ${year}`;
+         const formattedTime = `${hours}:${minutes}`;
+
+         return `${formattedDate}, ${formattedTime}`;
+      }
+
+      const exportCsv = async (type) => {
+         window.open(`/solarwinds/report/export`, '_blank')
+      }
+
+      const fetchSolarwinds = async () => {
+         const fetchData = await fetch(`/solarwinds/report`);
+         const response = await fetchData.json();
+         solarwinds = response;
+         renderData();
+      }
+
+      const renderData = () => {
+         let html = "";
+         for (let index = 0; index < solarwinds.length; index++) {
+            const item = solarwinds[index];
+            html += `
+               <tr
+                  class="bg-white border-b hover:bg-gray-50 hover:cursor-pointer">
+                  <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
+                     ${item.alert ?? '-'}
+                  </th>
+                  <td class="px-6 py-4 text-center">
+                     ${item.severity ?? '-'}
+                  </td>
+                  <td class="px-6 py-4">
+                     ${item.no_layanan ?? '-'}
+                  </td>
+                  <td class="px-6 py-4">
+                     ${item.layanan ?? '-'}
+                  </td>
+                  <td class="px-6 py-4 text-center">
+                     ${item.priority ?? '-'}
+                  </td>
+                  <td class="px-6 py-4">
+                     ${item.hostname ?? '-'}
+                  </td>
+                  <td class="px-6 py-4">
+                     ${item.service_time ?? '-'}
+                  </td>
+                  <td class="px-6 py-4">
+                     ${item.ip_address ?? '-'}
+                  </td>
+                  <td class="px-6 py-4">
+                     ${item.node_name ?? '-'}
+                  </td>
+                  <td class="px-6 py-4">
+                     ${item.percent_disk_used ?? '-'}
+                  </td>
+                  <td class="px-6 py-4">
+                     ${item.cpu_load ?? '-'}
+                  </td>
+                  <td class="px-6 py-4">
+                     ${item.max_cpu_load ?? '-'}
+                  </td>
+                  <td class="px-6 py-4">
+                     ${item.total_cpu_count ?? '-'}
+                  </td>
+                  <td class="px-6 py-4">
+                     ${item.memory_used ?? '-'}
+                  </td>
+                  <td class="px-6 py-4">
+                     ${item.max_memory_used ?? '-'}
+                  </td>
+                  <td class="px-6 py-4">
+                     ${item.total_memory ?? '-'}
+                  </td>
+                  <td class="px-6 py-4">
+                     ${item.os ?? '-'}
+                  </td>
+                  <td class="px-6 py-4 text-center">
+                     ${item.klarifikasi ?? '-'}
+                  </td>
+                  <td class="px-6 py-4">
+                     ${formatDateTime(item.created_at)}
+                  </td>
+               </tr>
+            `;
+         }
+         if (solarwinds.length > 0) {
+            solarwindsTable.innerHTML = html;
+         } else {
+            solarwindsTable.innerHTML = `
+               <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-600">
+                  <th colspan="8" scope="row"
+                     class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white text-center">
+                     No data available
+                  </th>
+               </tr>
+            `;
+         }
+
+      }
+
+
+      fetchSolarwinds();
+
+   </script>
+
+</body>
+
+</html>

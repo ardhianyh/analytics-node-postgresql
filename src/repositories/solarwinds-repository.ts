@@ -30,6 +30,20 @@ export class SolarwindsRepository {
       return query.rows.map(data => data as ISolarwinds);
    }
 
+   async getSolarwindsUpload(): Promise<ISolarwindsUpload[] | Error | undefined> {
+      const query = await this.database.query<ISolarwindsUpload>(`
+         SELECT * FROM public.solarwinds_upload;
+      `,
+         []
+      );
+
+      if (query instanceof Error) {
+         return query;
+      }
+
+      return query.rows;
+   }
+
    async insertSolarwinds(data: ISolarwinds): Promise<ISolarwinds | Error> {
       const query = await this.database.query<ISolarwinds>(`
          INSERT INTO public.solarwinds 
