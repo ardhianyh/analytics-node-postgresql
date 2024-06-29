@@ -17,3 +17,10 @@ export interface ISolarwinds {
    klarifikasi?: string;
    created_at?: string;
 }
+
+export interface ISolarwindsUpload extends ISolarwinds {
+   no_layanan?: string;
+   hostname?: string;
+   max_cpu_used?: string;
+   max_memory_used?: string;
+}

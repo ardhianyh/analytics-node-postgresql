@@ -16,6 +16,10 @@ router.get('/raw', (_: Request, response: Response) => {
    return response.sendFile(views + '/raw.html');
 });
 
+router.get('/upload', (_: Request, response: Response) => {
+   return response.sendFile(views + '/upload.html');
+});
+
 router.use('/appdynamics', appDynamicsRouter);
 router.use('/solarwinds', solarwindsRouter);
 router.use('/chart', chartRouter);

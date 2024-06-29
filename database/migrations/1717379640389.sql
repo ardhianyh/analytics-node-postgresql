@@ -53,6 +53,34 @@ CREATE INDEX idx_solarwinds_alert ON public.solarwinds(alert);
 CREATE INDEX idx_solarwinds_severity ON public.solarwinds(severity);
 CREATE INDEX idx_solarwinds_created_at ON public.solarwinds(created_at);
 
+CREATE TABLE public.solarwinds_upload (
+  id SERIAL PRIMARY KEY,  /* 4 bytes; 1 to 2.147.483.647 */
+  alert VARCHAR(255) NULL,
+  severity VARCHAR(255) NULL,
+  layanan VARCHAR(255) NULL,
+  no_layanan VARCHAR(255) NULL,
+  priority VARCHAR(255) NULL,
+  service_time VARCHAR(255) NULL,
+  hostname VARCHAR(255) NULL,
+  ip_address VARCHAR(255) NULL,
+  node_name VARCHAR(255) NULL,
+  percent_disk_used VARCHAR(255) NULL,
+  disk_used VARCHAR(255) NULL,
+  cpu_load VARCHAR(255) NULL,
+  max_cpu_used VARCHAR(255) NULL,
+  memory_used VARCHAR(255) NULL,
+  max_memory_used VARCHAR(255) NULL,
+  total_cpu_count VARCHAR(255) NULL,
+  total_memory VARCHAR(255) NULL,
+  os VARCHAR(255) NULL,
+  klarifikasi VARCHAR(255) NULL,
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE INDEX idx_solarwinds_upload_layanan ON public.solarwinds_upload(hostname);
+CREATE INDEX idx_solarwinds_upload_alert ON public.solarwinds_upload(ip_address);
+CREATE INDEX idx_solarwinds_upload_created_at ON public.solarwinds_upload(created_at);
+
 CREATE TABLE public.chart (
   alert VARCHAR(255) NULL,
   layanan VARCHAR(255) NULL,

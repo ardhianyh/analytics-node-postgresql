@@ -7,3 +7,4 @@ export * from './put-solarwinds-klarifikasi-controller';
 export * from './get-chart-controller';
 export * from './export-solarwinds-controller';
 export * from './export-appdynamics-controller';
+export * from './upload-solarwinds-controller';

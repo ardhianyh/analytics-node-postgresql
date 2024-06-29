@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>Upload Solarwinds Data</title>
+   <script src="./tailwind.js"></script>
+</head>
+
+<body class="bg-gray-100">
+   <div class="w-full h-full flex-1 p-6">
+      <div
+         class="rounded-sm border border-stroke bg-white p-6 shadow-default dark:border-strokedark dark:bg-boxdark mb-6">
+         <div class="flex justify-between items-center mb-6">
+            <p class="text-xl font-bold">Upload Solarwinds</p>
+            <div class="flex items-center gap-2">
+               <button id="selectFileButton" type="button"
+                  class="px-3 py-2 text-sm font-medium text-center text-white bg-green-700 rounded hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-green-300">Select
+                  CSV File</button>
+               <button onclick="uploadCsv()" id="uploadButton"
+                  class="px-3 py-2 text-sm font-medium text-center text-white bg-red-700 rounded hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300"
+                  style="display: none;">Upload</button>
+               <input type="file" id="fileInput" accept=".csv" style="display: none;">
+            </div>
+         </div>
+         <div class="relative overflow-x-auto shadow-md rounded-sm mt-4">
+            <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+               <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400"
+                  id="tableHead">
+               </thead>
+               <tbody id="dataTable">
+                  <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-600">
+                     <th colspan="8" scope="row"
+                        class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white text-center">
+                        No data available
+                     </th>
+                  </tr>
+               </tbody>
+            </table>
+         </div>
+      </div>
+
+   </div>
+
+
+   <script>
+      let jsonData = [];
+
+      document.getElementById('selectFileButton').addEventListener('click', function () {
+         document.getElementById('fileInput').click();
+      });
+
+      const uploadCsv = async () => {
+         try {
+            const response = await fetch(`/solarwinds/upload`, {
+               method: "POST",
+               headers: {
+                  "Content-Type": "application/json",
+               },
+               body: JSON.stringify(jsonData),
+            });
+
+            alert('Upload Success');
+            window.location.reload();
+
+         } catch (error) {
+            console.log(error)
+         }
+      }
+
+      document.getElementById('fileInput').addEventListener('change', function (event) {
+         const file = event.target.files[0];
+         if (file) {
+            const reader = new FileReader();
+            reader.onload = function (e) {
+               const data = e.target.result.replace(/"/g, '');;
+               const csvData = parseCSV(data);
+               jsonData = csvToJson(csvData);
+               displayData(csvData);
+            };
+            reader.readAsText(file);
+            document.getElementById('uploadButton').setAttribute('style', 'display: block');
+         }
+      });
+
+      function parseCSV(data) {
+         const rows = data.split('\n').map(row => row.split(';'));
+         return rows;
+      }
+
+      function csvToJson(csvData) {
+         const headers = csvData[0];
+         const jsonData = csvData.slice(1).map(row => {
+            const obj = {};
+            row.forEach((cell, index) => {
+               obj[headers[index].trim()] = cell.trim();
+            });
+            return obj;
+         });
+         return jsonData;
+      }
+
+      function displayData(data) {
+         const tableHead = document.getElementById('tableHead');
+         const tableBody = document.getElementById('dataTable');
+         tableHead.innerHTML = '';
+         tableBody.innerHTML = '';
+
+         if (data.length > 0) {
+            const headers = data[0];
+            const headerRow = document.createElement('tr');
+            headers.forEach(header => {
+               const th = document.createElement('th');
+               th.textContent = header.trim().replace(/"/g, '');;
+               th.classList.add('px-6', 'py-3');
+               headerRow.appendChild(th);
+            });
+            tableHead.appendChild(headerRow);
+
+            data.slice(1).forEach(row => {
+               const tableRow = document.createElement('tr');
+               tableRow.classList.add('bg-white', 'border-b', 'dark:bg-gray-800', 'dark:border-gray-700', 'dark:hover:bg-gray-600');
+               row.forEach(cell => {
+                  const td = document.createElement('td');
+                  td.textContent = cell.trim().replace(/"/g, '');;
+                  td.classList.add('px-6', 'py-4');
+                  tableRow.appendChild(td);
+               });
+               tableBody.appendChild(tableRow);
+            });
+         }
+      }
+   </script>
+</body>
+
+</html>
