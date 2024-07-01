@@ -1,9 +1,12 @@
 CREATE OR REPLACE FUNCTION public.get_appsdynamics(
-   page_in INTEGER DEFAULT NULL,
    limit_in INTEGER DEFAULT NULL,
-   severity_in VARCHAR(255) DEFAULT NULL,
-   app_in VARCHAR(255) DEFAULT NULL,
-   priority_in VARCHAR(255) DEFAULT NULL
+   layanan_in VARCHAR(255) DEFAULT NULL,
+   start_date_in DATE DEFAULT NULL,
+   end_date_in DATE DEFAULT NULL,
+   month_in TEXT DEFAULT NULL,
+   year_in TEXT DEFAULT NULL,
+   start_time_in TIME DEFAULT NULL,
+   end_time_in TIME DEFAULT NULL
 )
 RETURNS TABLE (
    id INTEGER,
@@ -35,21 +38,31 @@ DECLARE
 BEGIN
    RETURN QUERY
    SELECT * FROM public.appsdynamics a
-   WHERE (severity_in IS NULL OR a.severity ILIKE '%' || severity_in || '%')
-   AND (app_in IS NULL OR a.app ILIKE '%' || app_in || '%')
-   AND (priority_in IS NULL OR a.priority ILIKE '%' || priority_in || '%')
+   WHERE (layanan_in IS NULL OR a.app ILIKE '%' || layanan_in || '%')
+   AND (
+       (start_date_in IS NULL AND end_date_in IS NULL) OR 
+       (DATE(a.created_at) BETWEEN start_date_in AND end_date_in)
+   )
+   AND (
+       (start_time_in IS NULL AND end_time_in IS NULL) OR 
+       (SELECT a.created_at::time(0) BETWEEN start_time_in AND end_time_in)
+   )
+   AND (month_in IS NULL OR TO_CHAR(a.created_at, 'YYYY-MM') = month_in)
+   AND (year_in IS NULL OR TO_CHAR(a.created_at, 'YYYY') = year_in)
    ORDER BY a.created_at DESC
-   LIMIT (limit_in)
-   OFFSET (page_in * limit_in);
+   LIMIT limit_in;
 END;
 $$;
 
 CREATE OR REPLACE FUNCTION public.get_solarwinds(
-   page_in INTEGER DEFAULT NULL,
    limit_in INTEGER DEFAULT NULL,
-   severity_in VARCHAR(255) DEFAULT NULL,
    layanan_in VARCHAR(255) DEFAULT NULL,
-   priority_in VARCHAR(255) DEFAULT NULL
+   start_date_in DATE DEFAULT NULL,
+   end_date_in DATE DEFAULT NULL,
+   month_in TEXT DEFAULT NULL,
+   year_in TEXT DEFAULT NULL,
+   start_time_in TIME DEFAULT NULL,
+   end_time_in TIME DEFAULT NULL
 )
 RETURNS TABLE (
    id INTEGER,
@@ -76,12 +89,19 @@ DECLARE
 BEGIN
    RETURN QUERY
    SELECT * FROM public.solarwinds ss
-   WHERE (severity_in IS NULL OR ss.severity ILIKE '%' || severity_in || '%')
-   AND (layanan_in IS NULL OR ss.layanan ILIKE '%' || layanan_in || '%')
-   AND (priority_in IS NULL OR ss.priority ILIKE '%' || priority_in || '%')
+   WHERE (layanan_in IS NULL OR ss.layanan ILIKE '%' || layanan_in || '%')
+   AND (
+       (start_date_in IS NULL AND end_date_in IS NULL) OR 
+       (DATE(ss.created_at) BETWEEN start_date_in AND end_date_in)
+   )
+   AND (
+       (start_time_in IS NULL AND end_time_in IS NULL) OR 
+       (SELECT ss.created_at::time(0) BETWEEN start_time_in AND end_time_in)
+   )
+   AND (month_in IS NULL OR TO_CHAR(ss.created_at, 'YYYY-MM') = month_in)
+   AND (year_in IS NULL OR TO_CHAR(ss.created_at, 'YYYY') = year_in)
    ORDER BY ss.created_at DESC
-   LIMIT (limit_in)
-   OFFSET (page_in * limit_in);
+   LIMIT limit_in;
 END;
 $$;
 

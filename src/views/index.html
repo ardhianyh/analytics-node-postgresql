@@ -35,6 +35,7 @@
                      <option value="month">Month</option>
                      <option value="year">Year</option>
                      <option value="custom_time">Custom Time</option>
+                     <option value="last_minutes">Last Minutes</option>
                   </select>
                   <span class="absolute right-3 top-1/2 z-10 -translate-y-1/2">
                      <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -46,6 +47,7 @@
                </div>
                <div id="custom_date" class="flex gap-2"></div>
                <div id="custom_time" class="flex gap-2"></div>
+               <div id="last_minutes" class="flex gap-2"></div>
                <div id="month"></div>
                <div id="year"></div>
                <button type="button"
@@ -65,7 +67,7 @@
       let limit = 10;
 
       const renderTitle = () => {
-         document.getElementById("title").innerHTML = `Top ${limit} Layanan`;
+         document.getElementById("title").innerHTML = `Top ${limit} Alert`;
       }
 
       const changeLimit = (event) => {
@@ -91,7 +93,25 @@
          month: `${arrDate[0]}-${arrDate[1]}`,
          year: arrDate[0],
          start_time: null,
-         end_time: null
+         end_time: null,
+         last_minutes: 5
+      }
+
+      const getLastMinutes = (minute) => {
+         const now = new Date();
+         const endTime = now;
+         const startTime = new Date(now.getTime() - minute * 60 * 1000);
+
+         function formatTime(date) {
+            const hours = String(date.getHours()).padStart(2, '0');
+            const minutes = String(date.getMinutes()).padStart(2, '0');
+            return `${hours}:${minutes}`;
+         }
+
+         return {
+            start_time: formatTime(startTime),
+            end_time: formatTime(endTime)
+         };
       }
 
       const onChangeFilter = (event, type) => {
@@ -102,6 +122,7 @@
          let html = "";
          document.getElementById("custom_date").innerHTML = "";
          document.getElementById("custom_time").innerHTML = "";
+         document.getElementById("last_minutes").innerHTML = "";
          document.getElementById("month").innerHTML = "";
          document.getElementById("year").innerHTML = "";
 
@@ -121,6 +142,12 @@
                   class="bg-white border border-gray-300 text-black text-sm rounded focus:ring-blue-500 focus:border-blue-500 block w-[130px] p-2.5">
             `;
             document.getElementById("custom_time").innerHTML = html;
+         } else if (filterType === "last_minutes") {
+            html += `
+               <input type="number" onchange="onChangeFilter(event, 'last_minutes')" value="${filter.last_minutes}"
+                  class="bg-white border border-gray-300 text-black text-sm rounded focus:ring-blue-500 focus:border-blue-500 block w-[80px] p-2.5">
+            `;
+            document.getElementById("last_minutes").innerHTML = html;
          } else if (filterType === "month") {
             html += `
                <input onchange="onChangeFilter(event, 'month')" type="month" value="${filter.month}"
@@ -144,6 +171,9 @@
             params = `start_date=${filter.from}&end_date=${filter.to}`
          } else if (filterType === "custom_time") {
             params = `start_date=${date}&end_date=${date}&start_time=${filter.start_time}:00&end_time=${filter.end_time}:00`
+         } else if (filterType === "last_minutes") {
+            const lastMinutes = getLastMinutes(filter.last_minutes)
+            params = `start_date=${date}&end_date=${date}&start_time=${lastMinutes.start_time}:00&end_time=${lastMinutes.end_time}:00`
          } else if (filterType === "month") {
             params = `month=${filter.month}`;
          } else if (filterType === "year") {
@@ -191,13 +221,13 @@
             const item = chartList[index];
             html += `
                <div class="flex items-center gap-2 cursor-pointer" onclick="goToRaw('${item.layanan}')">
-                  <div class="w-1/5 flex gap-3">
-                     <p class="font-medium text-black text-sm">${index + 1}</p>
-                     <p class="font-medium text-black text-sm">${item.layanan}</p>
+                  <div class="w-5/12 flex gap-3">
+                     <p class="font-medium text-black text-l">${index + 1}</p>
+                     <p class="font-medium text-black text-l truncate">${item.layanan}</p>
                   </div>
-                  <div class="relative block h-[1.125rem] w-4/5 bg-white">
+                  <div class="relative block h-[1.5rem] w-7/12 bg-white">
                      <div
-                        class="absolute left-0 top-0 flex h-full w-[${item.percent}%] items-center justify-end rounded bg-[#e5e7eb] text-xs font-medium text-black pr-3">
+                        class="absolute left-0 top-0 flex h-full w-[${item.percent}%] items-center justify-end rounded bg-[#${index % 2 === 0 ? 'e5e7eb' : '669DF6'}] text-xs font-medium text-black pr-3">
                         ${item.total}
                      </div>
                   </div>
@@ -390,9 +420,9 @@
       renderFilter();
       fetchAll();
 
-      // setInterval(() => {
-      //    fetchAll();
-      // }, 5000);
+      setInterval(() => {
+         fetchAll();
+      }, 5000);
    </script>
 </body>
 

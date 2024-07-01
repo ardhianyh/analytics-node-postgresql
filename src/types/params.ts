@@ -17,6 +17,7 @@ export interface IAppDynamicsParams extends IParams {
 
 export interface IFilter {
    alert?: string;
+   layanan?: string;
    limit?: string;
    start_date?: string;
    end_date?: string;

@@ -1,25 +1,31 @@
-import { IDatabase, ISolarwinds, ISolarwindsParams, ISolarwindsUpload } from "../types";
+import { IDatabase, IFilter, ISolarwinds, ISolarwindsUpload } from "../types";
 import { convertDateToTimestamp } from "../utils";
 
 export class SolarwindsRepository {
    constructor(private database: IDatabase) { }
 
-   async getSolarwinds(params: ISolarwindsParams): Promise<ISolarwinds[] | Error | undefined> {
+   async getSolarwinds(filter: IFilter): Promise<ISolarwinds[] | Error | undefined> {
       const query = await this.database.query<ISolarwinds>(`
          SELECT * FROM public.get_solarwinds(
-            page_in := $1,
-            limit_in := $2,
-            severity_in := $3,
-            layanan_in := $4,
-            priority_in := $5
+            limit_in := $1,
+            layanan_in := $2,
+            start_date_in := $3,
+            end_date_in := $4,
+            month_in := $5,
+            year_in := $6,
+            start_time_in := $7,
+            end_time_in := $8
          )
       `,
          [
-            params.page ?? 0,
-            params.limit ?? 10,
-            params.severity ?? null,
-            params.layanan ?? null,
-            params.priority ?? null
+            filter.limit ?? 10,
+            filter.layanan,
+            filter.start_date ?? null,
+            filter.end_date ?? null,
+            filter.month ?? null,
+            filter.year ?? null,
+            filter.start_time ?? null,
+            filter.end_time ?? null
          ]
       );
 

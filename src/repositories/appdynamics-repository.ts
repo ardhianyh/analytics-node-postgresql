@@ -4,22 +4,31 @@ import { convertDateToTimestamp } from "../utils";
 export class AppDynamicsRepository {
    constructor(private database: IDatabase) { }
 
-   async getAppDynamics(params: IAppDynamicsParams): Promise<IAppDynamics[] | Error | undefined> {
+   async getAppDynamics(filter: IFilter): Promise<IAppDynamics[] | Error | undefined> {
       const query = await this.database.query<IAppDynamics>(`
          SELECT * FROM public.get_appsdynamics(
-            page_in := $1,
-            limit_in := $2,
-            severity_in := $3,
-            app_in := $4,
-            priority_in := $5
+            limit_in := $1,
+            layanan_in := $2,
+            start_date_in := $3,
+            end_date_in := $4,
+            month_in := $5,
+            year_in := $6,
+            start_time_in := $7,
+            end_time_in := $8
          )
-      `, [
-         params.page,
-         params.limit,
-         params.severity,
-         params.app,
-         params.priority
-      ]);
+      `,
+         [
+            filter.limit ?? 10,
+            filter.layanan,
+            filter.start_date ?? null,
+            filter.end_date ?? null,
+            filter.month ?? null,
+            filter.year ?? null,
+            filter.start_time ?? null,
+            filter.end_time ?? null
+         ]
+      );
+
       if (query instanceof Error) {
          return query;
       }
