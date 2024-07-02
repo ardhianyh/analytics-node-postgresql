@@ -1,13 +1,13 @@
 import { Request, Response } from "express";
 import { appDynamicRepository } from "../repositories";
-import { IAppDynamicsParams } from "../types";
+import { IFilter } from "../types";
 import { Parser } from 'json2csv';
 
 export const ExportAppdynamicsController = async (
    req: Request,
    res: Response
 ): Promise<Response | void> => {
-   const params = req.query as IAppDynamicsParams;
+   const params = req.query as IFilter;
    const result = await appDynamicRepository.getAppDynamics(params);
 
    if (result instanceof Error) {

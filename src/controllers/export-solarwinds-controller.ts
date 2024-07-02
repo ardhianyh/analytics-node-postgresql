@@ -1,13 +1,13 @@
 import { Request, Response } from "express";
 import { solarwindsRepository } from "../repositories";
-import { ISolarwindsParams } from "../types";
+import { IFilter } from "../types";
 import { Parser } from 'json2csv';
 
 export const ExportSolarwindsController = async (
    req: Request,
    res: Response
 ): Promise<Response | void> => {
-   const params = req.query as ISolarwindsParams;
+   const params = req.query as IFilter;
    const result = await solarwindsRepository.getSolarwinds(params);
 
    if (result instanceof Error) {
