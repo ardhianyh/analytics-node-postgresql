@@ -30,7 +30,7 @@
                   </span>
                </div>
                <div class="relative rounded bg-white">
-                  <select onchange="changeFilterType(event, 'solarwinds')"
+                  <select onchange="changeFilterType(event, 'solarwinds')" id="filterType_solarwinds"
                      class="relative inline-flex appearance-none rounded border border-gray-300 bg-white py-2 pl-4 pr-9 text-sm outline-none h-[42px]">
                      <option value="custom_date" selected>Custom Date</option>
                      <option value="month">Month</option>
@@ -124,7 +124,7 @@
                   </span>
                </div>
                <div class="relative rounded bg-white">
-                  <select onchange="changeFilterType(event, 'appdynamics')"
+                  <select onchange="changeFilterType(event, 'appdynamics')" id="filterType_appdynamics"
                      class="relative inline-flex appearance-none rounded border border-gray-300 bg-white py-2 pl-4 pr-9 text-sm outline-none h-[42px]">
                      <option value="custom_date" selected>Custom Date</option>
                      <option value="month">Month</option>
@@ -315,8 +315,13 @@
          };
       }
 
-      const onChangeFilter = (event, app, type) => {
-         filter[app][type] = event.target.value;
+      const onChangeFilter = (event, app, field) => {
+         const value = event.target.value;
+         if (field === "start_time" || field === "end_time") {
+            filter[app][field] = value + ':00';
+         } else {
+            filter[app][field] = value;
+         }
       }
 
       const getFilterParams = (type) => {
@@ -373,9 +378,9 @@
             document.getElementById(type + "_custom_date").innerHTML = html;
          } else if (filterType === "custom_time") {
             html += `
-               <input type="time" onchange="onChangeFilter(event, '${type}', 'start_time')"
+               <input type="time" onchange="onChangeFilter(event, '${type}', 'start_time')" value="${data.start_time}"
                   class="bg-white border border-gray-300 text-black text-sm rounded focus:ring-blue-500 focus:border-blue-500 block w-[130px] p-2.5">
-               <input type="time" onchange="onChangeFilter(event, '${type}', 'end_time')"
+               <input type="time" onchange="onChangeFilter(event, '${type}', 'end_time')" value="${data.end_time}"
                   class="bg-white border border-gray-300 text-black text-sm rounded focus:ring-blue-500 focus:border-blue-500 block w-[130px] p-2.5">
             `;
             document.getElementById(type + "_custom_time").innerHTML = html;
@@ -418,11 +423,6 @@
          window.open(`/${type}/export?${params}`, '_blank')
       }
 
-      const filterOnChange = async (event, app, field) => {
-         const value = event.target.value;
-         filter[app][field] = value;
-      }
-
       const fetchAppDynamic = async (app) => {
          const params = await getQueryParams(app);
 
@@ -457,10 +457,10 @@
             if (solarwindsFilterType === "custom_date") {
                params.push(`start_date=${filter.solarwinds.from}&end_date=${filter.solarwinds.to}`)
             } else if (solarwindsFilterType === "custom_time") {
-               params.push(`start_date=${date}&end_date=${date}&start_time=${filter.solarwinds.start_time}:00&end_time=${filter.solarwinds.end_time}:00`)
+               params.push(`start_date=${date}&end_date=${date}&start_time=${filter.solarwinds.start_time}&end_time=${filter.solarwinds.end_time}`)
             } else if (solarwindsFilterType === "last_minutes") {
                const lastMinutes = getLastMinutes(filter.solarwinds.last_minutes)
-               params.push(`start_date=${date}&end_date=${date}&start_time=${lastMinutes.start_time}:00&end_time=${lastMinutes.end_time}:00`)
+               params.push(`start_date=${date}&end_date=${date}&start_time=${lastMinutes.start_time}&end_time=${lastMinutes.end_time}`)
             } else if (solarwindsFilterType === "month") {
                params.push(`month=${filter.solarwinds.month}`)
             } else if (solarwindsFilterType === "year") {
@@ -473,10 +473,10 @@
             if (appdynamicsFilterType === "custom_date") {
                params.push(`start_date=${filter.appdynamics.from}&end_date=${filter.appdynamics.to}`)
             } else if (appdynamicsFilterType === "custom_time") {
-               params.push(`start_date=${date}&end_date=${date}&start_time=${filter.appdynamics.start_time}:00&end_time=${filter.appdynamics.end_time}:00`)
+               params.push(`start_date=${date}&end_date=${date}&start_time=${filter.appdynamics.start_time}&end_time=${filter.appdynamics.end_time}`)
             } else if (appdynamicsFilterType === "last_minutes") {
                const lastMinutes = getLastMinutes(filter.appdynamics.last_minutes)
-               params.push(`start_date=${date}&end_date=${date}&start_time=${lastMinutes.start_time}:00&end_time=${lastMinutes.end_time}:00`)
+               params.push(`start_date=${date}&end_date=${date}&start_time=${lastMinutes.start_time}&end_time=${lastMinutes.end_time}`)
             } else if (appdynamicsFilterType === "month") {
                params.push(`month=${filter.appdynamics.month}`)
             } else if (appdynamicsFilterType === "year") {
@@ -729,10 +729,41 @@
       const queryString = window.location.search;
       const urlParams = new URLSearchParams(queryString);
 
-      const layananParam = urlParams.get('layanan')
+      const layananParam = urlParams.get('layanan');
+      const filterType = urlParams.get('filterType');
+      const start_date = urlParams.get('start_date');
+      const end_date = urlParams.get('end_date');
+      const start_time = urlParams.get('start_time');
+      const end_time = urlParams.get('end_time');
+
       if (layananParam) {
          filter.appdynamics.app = layananParam;
          filter.solarwinds.layanan = layananParam;
+      }
+
+      if (filterType) {
+         solarwindsFilterType = filterType;
+         appdynamicsFilterType = filterType;
+      }
+
+      if (start_date) {
+         filter.appdynamics.from = start_date;
+         filter.solarwinds.from = start_date;
+      }
+
+      if (end_date) {
+         filter.appdynamics.to = end_date;
+         filter.solarwinds.to = end_date;
+      }
+
+      if (start_time) {
+         filter.appdynamics.start_time = start_time;
+         filter.solarwinds.start_time = start_time;
+      }
+
+      if (end_time) {
+         filter.appdynamics.end_time = end_time;
+         filter.solarwinds.end_time = end_time;
       }
 
       fetchAppDynamicsData();

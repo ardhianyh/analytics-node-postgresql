@@ -136,9 +136,9 @@
             document.getElementById("custom_date").innerHTML = html;
          } else if (filterType === "custom_time") {
             html += `
-               <input type="time" onchange="onChangeFilter(event, 'start_time')"
+               <input type="time" onchange="onChangeFilter(event, 'start_time')" step="0.001"
                   class="bg-white border border-gray-300 text-black text-sm rounded focus:ring-blue-500 focus:border-blue-500 block w-[130px] p-2.5">
-               <input type="time" onchange="onChangeFilter(event, 'end_time')"
+               <input type="time" onchange="onChangeFilter(event, 'end_time')" step="0.001"
                   class="bg-white border border-gray-300 text-black text-sm rounded focus:ring-blue-500 focus:border-blue-500 block w-[130px] p-2.5">
             `;
             document.getElementById("custom_time").innerHTML = html;
@@ -166,18 +166,18 @@
       }
 
       const getFilterParams = () => {
-         let params = "";
+         let params = "filterType=" + filterType + "&";
          if (filterType === "custom_date") {
-            params = `start_date=${filter.from}&end_date=${filter.to}`
+            params += `start_date=${filter.from}&end_date=${filter.to}`
          } else if (filterType === "custom_time") {
-            params = `start_date=${date}&end_date=${date}&start_time=${filter.start_time}:00&end_time=${filter.end_time}:00`
+            params += `start_date=${date}&end_date=${date}&start_time=${filter.start_time}&end_time=${filter.end_time}`
          } else if (filterType === "last_minutes") {
             const lastMinutes = getLastMinutes(filter.last_minutes)
-            params = `start_date=${date}&end_date=${date}&start_time=${lastMinutes.start_time}:00&end_time=${lastMinutes.end_time}:00`
+            params += `start_date=${date}&end_date=${date}&start_time=${lastMinutes.start_time}&end_time=${lastMinutes.end_time}`
          } else if (filterType === "month") {
-            params = `month=${filter.month}`;
+            params += `month=${filter.month}`;
          } else if (filterType === "year") {
-            params = `year=${filter.year}`;
+            params += `year=${filter.year}`;
          }
          return params
       }
@@ -196,7 +196,8 @@
       }
 
       const goToRaw = (layanan) => {
-         window.open(`/raw?layanan=${layanan}`);
+         const params = getFilterParams();
+         window.open(`/raw?layanan=${layanan}&${params}`);
       }
 
       const renderChart = () => {
