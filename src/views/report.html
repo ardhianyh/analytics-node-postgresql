@@ -121,11 +121,11 @@
       }
 
       const exportCsv = async (type) => {
-         window.open(`/solarwinds/report/export`, '_blank')
+         window.open(`/api/webhook/solarwinds/report/export`, '_blank')
       }
 
       const fetchSolarwinds = async () => {
-         const fetchData = await fetch(`/solarwinds/report`);
+         const fetchData = await fetch(`/api/webhook/solarwinds/report`);
          const response = await fetchData.json();
          solarwinds = response;
          renderData();

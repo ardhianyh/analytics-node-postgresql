@@ -426,7 +426,7 @@
       const fetchAppDynamic = async (app) => {
          const params = await getQueryParams(app);
 
-         const fetchAppDynamic = await fetch(`/appdynamics?${params}`);
+         const fetchAppDynamic = await fetch(`/api/webhook/appdynamics?${params}`);
          const response = await fetchAppDynamic.json();
          return response;
       }
@@ -434,7 +434,7 @@
       const fetchSolarwinds = async (app) => {
          const params = await getQueryParams(app);
 
-         const fetchAppDynamic = await fetch(`/solarwinds?${params}`);
+         const fetchAppDynamic = await fetch(`/api/webhook/solarwinds?${params}`);
          const response = await fetchAppDynamic.json();
          return response;
       }
@@ -443,12 +443,9 @@
          let params = [];
          const url = new URLSearchParams(window.location.search);
          const layanan = url.get('layanan');
-         if (!layanan) {
-            alert("Layanan is required");
-            window.location.href = "/"
+         if (layanan) {
+            params.push(`layanan=${layanan}`);
          }
-
-         params.push(`layanan=${layanan}`);
 
          if (app === "solarwinds") {
             params.push(`page=${solarwindsPageIndex}`);

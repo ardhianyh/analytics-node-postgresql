@@ -261,7 +261,7 @@
 
             currentDate.setDate(currentDate.getDate() + 1);
 
-            const response = await fetch(`/solarwinds`, {
+            const response = await fetch(`/api/webhook/solarwinds`, {
                method: "POST",
                headers: {
                   "Content-Type": "application/json",
@@ -352,7 +352,7 @@
                created_at: created_at
             }
 
-            const response = await fetch(`/appdynamics`, {
+            const response = await fetch(`/api/webhook/appdynamics`, {
                method: "POST",
                headers: {
                   "Content-Type": "application/json",
@@ -401,7 +401,7 @@
                created_at: created_at
             }
 
-            const response = await fetch(`/appdynamics`, {
+            const response = await fetch(`/api/webhook/appdynamics`, {
                method: "POST",
                headers: {
                   "Content-Type": "application/json",

@@ -8,17 +8,19 @@ export class AppDynamicsRepository {
       const query = await this.database.query<IAppDynamics>(`
          SELECT * FROM public.get_appsdynamics(
             limit_in := $1,
-            layanan_in := $2,
-            start_date_in := $3,
-            end_date_in := $4,
-            month_in := $5,
-            year_in := $6,
-            start_time_in := $7,
-            end_time_in := $8
+            page_in := $2,
+            layanan_in := $3,
+            start_date_in := $4,
+            end_date_in := $5,
+            month_in := $6,
+            year_in := $7,
+            start_time_in := $8,
+            end_time_in := $9
          )
       `,
          [
             filter.limit ?? 10,
+            filter.page ?? 0,
             filter.layanan,
             filter.start_date ?? null,
             filter.end_date ?? null,

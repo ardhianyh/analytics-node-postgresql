@@ -53,7 +53,7 @@
 
       const uploadCsv = async () => {
          try {
-            const response = await fetch(`/solarwinds/upload`, {
+            const response = await fetch(`/api/webhook/solarwinds/upload`, {
                method: "POST",
                headers: {
                   "Content-Type": "application/json",

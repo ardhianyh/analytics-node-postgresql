@@ -1,5 +1,6 @@
 CREATE OR REPLACE FUNCTION public.get_appsdynamics(
    limit_in INTEGER DEFAULT NULL,
+   page_in INTEGER DEFAULT NULL,
    layanan_in VARCHAR(255) DEFAULT NULL,
    start_date_in DATE DEFAULT NULL,
    end_date_in DATE DEFAULT NULL,
@@ -50,12 +51,14 @@ BEGIN
    AND (month_in IS NULL OR TO_CHAR(a.created_at, 'YYYY-MM') = month_in)
    AND (year_in IS NULL OR TO_CHAR(a.created_at, 'YYYY') = year_in)
    ORDER BY a.created_at DESC
-   LIMIT limit_in;
+   LIMIT limit_in
+   OFFSET (page_in * limit_in);
 END;
 $$;
 
 CREATE OR REPLACE FUNCTION public.get_solarwinds(
    limit_in INTEGER DEFAULT NULL,
+   page_in INTEGER DEFAULT NULL,
    layanan_in VARCHAR(255) DEFAULT NULL,
    start_date_in DATE DEFAULT NULL,
    end_date_in DATE DEFAULT NULL,
@@ -101,7 +104,8 @@ BEGIN
    AND (month_in IS NULL OR TO_CHAR(ss.created_at, 'YYYY-MM') = month_in)
    AND (year_in IS NULL OR TO_CHAR(ss.created_at, 'YYYY') = year_in)
    ORDER BY ss.created_at DESC
-   LIMIT limit_in;
+   LIMIT limit_in
+   OFFSET (page_in * limit_in);
 END;
 $$;
 

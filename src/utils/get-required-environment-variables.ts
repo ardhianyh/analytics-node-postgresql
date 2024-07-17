@@ -1,3 +1,6 @@
+import dotenv from "dotenv";
+dotenv.config();
+
 export const getRequiredEnvironmentVariables = (): {
    host: string;
    port: string;
