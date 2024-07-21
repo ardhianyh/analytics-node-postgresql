@@ -426,7 +426,7 @@
       const fetchAppDynamic = async (app) => {
          const params = await getQueryParams(app);
 
-         const fetchAppDynamic = await fetch(`/api/webhook/appdynamics?${params}`);
+         const fetchAppDynamic = await fetch(`/api/webhooks/appdynamics?${params}`);
          const response = await fetchAppDynamic.json();
          return response;
       }
@@ -434,7 +434,7 @@
       const fetchSolarwinds = async (app) => {
          const params = await getQueryParams(app);
 
-         const fetchAppDynamic = await fetch(`/api/webhook/solarwinds?${params}`);
+         const fetchAppDynamic = await fetch(`/api/webhooks/solarwinds?${params}`);
          const response = await fetchAppDynamic.json();
          return response;
       }

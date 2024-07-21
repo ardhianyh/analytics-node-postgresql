@@ -67,7 +67,7 @@
       let limit = 10;
 
       const renderTitle = () => {
-         document.getElementById("title").innerHTML = `Top ${limit} Alert`;
+         document.getElementById("title").innerHTML = `Trending Alert`;
       }
 
       const changeLimit = (event) => {
@@ -261,7 +261,7 @@
 
             currentDate.setDate(currentDate.getDate() + 1);
 
-            const response = await fetch(`/api/webhook/solarwinds`, {
+            const response = await fetch(`/api/webhooks/solarwinds`, {
                method: "POST",
                headers: {
                   "Content-Type": "application/json",
@@ -352,7 +352,7 @@
                created_at: created_at
             }
 
-            const response = await fetch(`/api/webhook/appdynamics`, {
+            const response = await fetch(`/api/webhooks/appdynamics`, {
                method: "POST",
                headers: {
                   "Content-Type": "application/json",
@@ -401,7 +401,7 @@
                created_at: created_at
             }
 
-            const response = await fetch(`/api/webhook/appdynamics`, {
+            const response = await fetch(`/api/webhooks/appdynamics`, {
                method: "POST",
                headers: {
                   "Content-Type": "application/json",

@@ -24,8 +24,8 @@ router.get('/report', (_: Request, response: Response) => {
    return response.sendFile(views + '/report.html');
 });
 
-router.use('/api/webhook/appdynamics', appDynamicsRouter);
-router.use('/api/webhook/solarwinds', solarwindsRouter);
+router.use('/api/webhooks/appdynamics', appDynamicsRouter);
+router.use('/api/webhooks/solarwinds', solarwindsRouter);
 router.use('/chart', chartRouter);
 
 export const route = router;
