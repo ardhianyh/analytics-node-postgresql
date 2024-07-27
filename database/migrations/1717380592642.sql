@@ -40,6 +40,7 @@ BEGIN
    RETURN QUERY
    SELECT * FROM public.appsdynamics a
    WHERE (layanan_in IS NULL OR a.app ILIKE '%' || layanan_in || '%')
+   AND LOWER(a.severity) != 'info'
    AND (
        (start_date_in IS NULL AND end_date_in IS NULL) OR 
        (DATE(a.created_at) BETWEEN start_date_in AND end_date_in)
@@ -93,6 +94,7 @@ BEGIN
    RETURN QUERY
    SELECT * FROM public.solarwinds ss
    WHERE (layanan_in IS NULL OR ss.layanan ILIKE '%' || layanan_in || '%')
+   AND LOWER(ss.severity) != 'info'
    AND (
        (start_date_in IS NULL AND end_date_in IS NULL) OR 
        (DATE(ss.created_at) BETWEEN start_date_in AND end_date_in)
