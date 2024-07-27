@@ -122,6 +122,7 @@ export const InsertAppDynamicsController = async (
 
    const chart: IChart = {
       alert: result.alert,
+      source: 'appdynamics',
       layanan: params.app,
       severity: params.severity,
       created_at: result.created_at

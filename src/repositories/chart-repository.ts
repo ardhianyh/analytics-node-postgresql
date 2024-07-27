@@ -6,25 +6,44 @@ export class ChartRepository {
 
    async getChart(filter: IFilter): Promise<{ app: string, total: number }[] | Error | undefined> {
       const query = await this.database.query<{ app: string, total: number }>(`
-         SELECT * FROM public.get_chart(
-            limit_in := $1,
-            start_date_in := $2,
-            end_date_in := $3,
-            month_in := $4,
-            year_in := $5,
-            start_time_in := $6,
-            end_time_in := $7
+         WITH severity_counts AS (
+            SELECT
+               source,
+               layanan,
+               COUNT(*) FILTER (WHERE LOWER(severity) = 'critical') AS critical,
+               COUNT(*) FILTER (WHERE LOWER(severity) = 'warning') AS warning,
+               COUNT(*) FILTER (WHERE LOWER(severity) = 'serious') AS serious
+            FROM public.chart
+            WHERE LOWER(severity) != 'info'
+            AND (
+               (${filter.start_date ? `'${filter.start_date}'` : `NULL`} IS NULL AND ${filter.end_date ? `'${filter.end_date}'` : `NULL`} IS NULL) OR 
+               (DATE(created_at) BETWEEN ${filter.start_date ? `'${filter.start_date}'` : `NULL`} AND ${filter.end_date ? `'${filter.end_date}'` : `NULL`})
+            )
+            AND (
+               (${filter.start_time ? `'${filter.start_time}'` : `NULL`} IS NULL AND ${filter.end_time ? `'${filter.end_time}'` : `NULL`} IS NULL) OR 
+               (SELECT created_at::time(0) BETWEEN ${filter.start_time ? `'${filter.start_time}'` : `NULL`} AND ${filter.end_time ? `'${filter.end_time}'` : `NULL`})
+            )
+            AND (${filter.month ? `'${filter.month}'` : `NULL`} IS NULL OR TO_CHAR(created_at, 'YYYY-MM') = ${filter.month ? `'${filter.month}'` : `NULL`})
+            AND (${filter.year ? `'${filter.year}'` : `NULL`} IS NULL OR TO_CHAR(created_at, 'YYYY') = ${filter.year ? `'${filter.year}'` : `NULL`})
+            GROUP BY source, layanan
          )
+         SELECT
+            layanan,
+            SUM(critical + warning + serious) AS total,
+            jsonb_object_agg(
+               source,
+               jsonb_build_object(
+                     'critical', critical,
+                     'warning', warning,
+                     'serious', serious
+               )
+            ) AS severity
+         FROM severity_counts
+         GROUP BY layanan
+         ORDER BY total DESC
+         LIMIT COALESCE(${filter.limit}, 5);
       `,
-         [
-            filter.limit ?? 10,
-            filter.start_date ?? null,
-            filter.end_date ?? null,
-            filter.month ?? null,
-            filter.year ?? null,
-            filter.start_time ?? null,
-            filter.end_time ?? null
-         ]
+         []
       );
 
       if (query instanceof Error) {
@@ -36,12 +55,13 @@ export class ChartRepository {
 
    async insertChart(data: IChart): Promise<IChart | Error | undefined> {
       const query = await this.database.query<IChart>(`
-         INSERT INTO public.chart (alert, layanan, severity, created_at)
-         VALUES ($1, $2, $3, $4)
+         INSERT INTO public.chart (alert, source, layanan, severity, created_at)
+         VALUES ($1, $2, $3, $4, $5)
          RETURNING *
       `,
          [
             data.alert,
+            data.source,
             data.layanan,
             data.severity,
             data.created_at

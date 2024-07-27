@@ -83,6 +83,7 @@ CREATE INDEX idx_solarwinds_upload_created_at ON public.solarwinds_upload(create
 
 CREATE TABLE public.chart (
   alert VARCHAR(255) NULL,
+  source VARCHAR(255) NULL,
   layanan VARCHAR(255) NULL,
   severity VARCHAR(255) NULL,
   created_at TIMESTAMPTZ DEFAULT NOW()

@@ -34,6 +34,7 @@ export const InsertSolarwindsController = async (
 
    const chart: IChart = {
       alert: input.alert,
+      source: 'solarwinds',
       layanan: input.layanan,
       severity: input.severity,
       created_at: result.created_at
