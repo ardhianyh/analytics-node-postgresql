@@ -21,7 +21,7 @@ export class ChartRepository {
             )
             AND (
                (${filter.start_time ? `'${filter.start_time}'` : `NULL`} IS NULL AND ${filter.end_time ? `'${filter.end_time}'` : `NULL`} IS NULL) OR 
-               (SELECT created_at::time(0) BETWEEN ${filter.start_time ? `'${filter.start_time}'` : `NULL`} AND ${filter.end_time ? `'${filter.end_time}'` : `NULL`})
+               (created_at::time(0) BETWEEN ${filter.start_time ? `'${filter.start_time}'` : `NULL`} AND ${filter.end_time ? `'${filter.end_time}'` : `NULL`})
             )
             AND (${filter.month ? `'${filter.month}'` : `NULL`} IS NULL OR TO_CHAR(created_at, 'YYYY-MM') = ${filter.month ? `'${filter.month}'` : `NULL`})
             AND (${filter.year ? `'${filter.year}'` : `NULL`} IS NULL OR TO_CHAR(created_at, 'YYYY') = ${filter.year ? `'${filter.year}'` : `NULL`})

@@ -6,16 +6,20 @@
    <meta name="viewport" content="width=device-width, initial-scale=1.0">
    <title>Dashboard</title>
    <script src="./tailwind.js"></script>
+   <script src="./jquery-3.7.1.min.js" ></script>
+   <link rel="stylesheet" href="./dataTables.css" />
+  
+   <script src="./dataTables.js"></script>
 </head>
 
 <body class="bg-gray-100">
    <div class="w-full h-full block p-6">
-      <div class="rounded-sm flex flex-col gap-2 border border-stroke bg-white p-5 shadow-default w-full">
+      <div class="rounded-sm flex flex-col gap-2 border border-stroke bg-[#023385] p-5 shadow-default w-full">
          <div class="flex justify-between items-center mb-5">
-            <h3 class="text-3xl font-bold text-black" id="title"></h3>
+            <h3 class="text-3xl font-bold text-white " id="title"></h3>
             <div class="flex gap-2">
                <div class="relative rounded bg-white">
-                  <select onchange="changeLimit(event)"
+                  <select onchange="changeLimit(event)" autocomplete="off"
                      class="relative inline-flex appearance-none rounded border border-gray-300 bg-white py-2 pl-4 pr-9 text-sm outline-none h-[42px]">
                      <option value="10" selected>Top 10</option>
                      <option value="20">Top 20</option>
@@ -29,12 +33,12 @@
                   </span>
                </div>
                <div class="relative rounded bg-white">
-                  <select onchange="changeFilterType(event)"
+                  <select onchange="changeFilterType(event)" autocomplete="off"
                      class="relative inline-flex appearance-none rounded border border-gray-300 bg-white py-2 pl-4 pr-9 text-sm outline-none h-[42px]">
                      <option value="custom_date" selected>Custom Date</option>
                      <option value="month">Month</option>
                      <option value="year">Year</option>
-                     <option value="custom_time">Custom Time</option>
+                     <!--<option value="custom_time">Custom Time</option>-->
                      <option value="last_minutes">Last Minutes</option>
                   </select>
                   <span class="absolute right-3 top-1/2 z-10 -translate-y-1/2">
@@ -55,7 +59,10 @@
                   onclick="fetchChart()">Filter</button>
             </div>
          </div>
+         <div class="flex flex-col gap-2">
+         </div>
          <div id="chart" class="flex flex-col gap-2"></div>
+         <div id="datatable" class="flex flex-col gap-2"></div>
       </div>
    </div>
 
@@ -77,6 +84,7 @@
       let charts;
 
       const chart = document.getElementById("chart");
+      const datatablediv = document.getElementById("datatable");
 
       const dateString = new Date().toISOString();
       const date = dateString.substring(0, dateString.indexOf('T'));
@@ -209,8 +217,22 @@
             </div>
          `;
 
+         let datatable = `
+            <table id="example3" class="" style="width:100%">
+               <thead>
+                     <tr>
+                        <th class="w-5/12 text-white ">Layanan Resource</th>
+                        <th class="w-1/12 text-white ">Serious</th>
+                        <th class="w-1/12 text-white ">Critical</th>
+                        <th class="w-1/12 text-white ">Warning</th>
+                        <th class="w-1/12 text-white ">Down</th>
+                     </tr>
+               </thead>
+               <tbody>
+         `;
+
          if (charts.length === 0) {
-            chart.innerHTML = `<p class="text-center">No data available</p>`;
+            datatablediv.innerHTML = `<p class="text-center text-white ">No data available</p>`;
             return;
          }
 
@@ -274,8 +296,55 @@
                   </div>
                </div>
             `;
+            if (item.severity.solarwinds) {
+               datatable += `
+                  <tr>
+                     <td><span class="flex items-center gap-5 cursor-pointer text-white " onclick="goToRaw('${item.layanan}')">${item.layanan}</td>
+                     <td><span class="flex items-center gap-5 cursor-pointer" onclick="goToRaw('${item.layanan}')"> <div class="w-full h-[40px] rounded flex items-center justify-between px-2 text-white bg-red-600">
+                           <span>
+                              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" fill="rgba(255,255,255,1)"><path d="M12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12C22 17.5228 17.5228 22 12 22ZM12 10.5858L9.17157 7.75736L7.75736 9.17157L10.5858 12L7.75736 14.8284L9.17157 16.2426L12 13.4142L14.8284 16.2426L16.2426 14.8284L13.4142 12L16.2426 9.17157L14.8284 7.75736L12 10.5858Z"></path></svg>
+                           </span>
+                           <span>${(item.severity.solarwinds && item.severity.solarwinds.serious) ? item.severity.solarwinds.serious : 0}</span>
+                        </div></td>
+                     <td><span class="flex items-center gap-5 cursor-pointer" onclick="goToRaw('${item.layanan}')"> <div class="w-full h-[40px] rounded flex items-center justify-between px-2 text-white bg-[#fe9f41]">
+                           <span>
+                              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" fill="rgba(255,255,255,1)"><path d="M12.8659 3.00017L22.3922 19.5002C22.6684 19.9785 22.5045 20.5901 22.0262 20.8662C21.8742 20.954 21.7017 21.0002 21.5262 21.0002H2.47363C1.92135 21.0002 1.47363 20.5525 1.47363 20.0002C1.47363 19.8246 1.51984 19.6522 1.60761 19.5002L11.1339 3.00017C11.41 2.52187 12.0216 2.358 12.4999 2.63414C12.6519 2.72191 12.7782 2.84815 12.8659 3.00017ZM10.9999 16.0002V18.0002H12.9999V16.0002H10.9999ZM10.9999 9.00017V14.0002H12.9999V9.00017H10.9999Z"></path></svg>
+                           </span>
+                           <span>${(item.severity.solarwinds && item.severity.solarwinds.critical) ? item.severity.solarwinds.critical : 0}</span>
+                        </div></td>
+                     <td><span class="flex items-center gap-5 cursor-pointer" onclick="goToRaw('${item.layanan}')"><div class="w-full h-[40px] rounded flex items-center justify-between px-2 text-white bg-yellow-400">
+                           <span>
+                              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" fill="rgba(255,255,255,1)"><path d="M12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12C22 17.5228 17.5228 22 12 22ZM11 15V17H13V15H11ZM11 7V13H13V7H11Z"></path></svg>
+                           </span>
+                           <span>${(item.severity.solarwinds && item.severity.solarwinds.warning) ? item.severity.solarwinds.warning : 0}</span>
+                        </div></td>
+                     <td><span class="flex items-center gap-5 cursor-pointer" onclick="goToRaw('${item.layanan}')"><div class="w-full h-[40px] rounded flex items-center justify-between px-2 text-white bg-purple-700">
+                           <span>
+                              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" fill="rgba(255,255,255,1)"><path d="M12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12C22 17.5228 17.5228 22 12 22ZM11 15V17H13V15H11ZM11 7V13H13V7H11Z"></path></svg>
+                           </span>
+                           <span>0</span>
+                        </div></td>
+                  </tr>
+               `;
+            }
          }
-         chart.innerHTML = html;
+         // chart.innerHTML = html;
+
+         datatable += `
+               </tbody>
+            </table>
+         `;
+         datatablediv.innerHTML = datatable;
+
+         setTimeout(function(){
+ 
+            new DataTable('#example3', {
+            info: false,
+            paging: false,
+            searching: false,
+            stateSave: true
+            });
+         }, 0);
 
       }
 
@@ -471,6 +540,14 @@
       setInterval(() => {
          fetchAll();
       }, 5000);
+      
+      new DataTable('#example2', {
+         info: false,
+         paging: false,
+         searching: false
+      });
+
+      
    </script>
 </body>
 
